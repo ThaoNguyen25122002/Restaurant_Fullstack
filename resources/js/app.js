@@ -1,8 +1,10 @@
 import "./bootstrap";
 import "../css/app.css";
 import { createApp, h } from "vue";
-import { createInertiaApp } from "@inertiajs/vue3";
-
+import { createInertiaApp, Link, Head } from "@inertiajs/vue3";
+import { ZiggyVue } from "../../vendor/tightenco/ziggy";
+import ElementPlus from "element-plus";
+import "element-plus/dist/index.css";
 createInertiaApp({
     resolve: (name) => {
         const pages = import.meta.glob("./Pages/**/*.vue", { eager: true });
@@ -11,6 +13,10 @@ createInertiaApp({
     setup({ el, App, props, plugin }) {
         createApp({ render: () => h(App, props) })
             .use(plugin)
+            .use(ZiggyVue)
+            .use(ElementPlus)
+            .component("Link", Link)
+            .component("Head", Head)
             .mount(el);
     },
 });
