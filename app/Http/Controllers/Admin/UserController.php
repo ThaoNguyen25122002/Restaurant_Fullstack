@@ -13,13 +13,20 @@ use Inertia\Inertia;
 
 class UserController extends Controller
 {
-    public function index(){
+    public function index(Request $request){
+        // dd($request->search);
         $roles = Role::all();
-        $users = User::with('role')->paginate(10);
+        // $users = User::with('role')->paginate(10);
+        $users = User::when($request->search,function($query) use($request){
+            $query->where('name','like','%'.$request->search.'%')->orWhere('email','like','%'.$request->search.'%')
+            ->orWhere('phone','like','%'.$request->search.'%');
+        })->with('role')->orderBy('id', 'desc')->paginate(5)->withQueryString();
+        // dd($users);
         // return Inertia::render('Admin/User/Index');
         return inertia('Admin/User/Index',[
             'roles' => $roles,
             'users' => $users,
+            'searchTerm'=>$request->search
         ]);
     }
 

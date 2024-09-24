@@ -1,25 +1,11 @@
 <script setup>
-import { router, useForm } from "@inertiajs/vue3";
-import { ref } from "vue";
+import AdminLayout from "@/Layouts/Admin/AdminLayout.vue";
 import Swal from "sweetalert2";
-import FormSearch from "@/components/Admin/FormSearch/Index.vue";
-const props = defineProps({
-    users: Object,
-    roles: Array,
-    searchTerm: String,
-    // openEditModal: Function,
-    // form: Object,
+
+import { ref } from "vue";
+defineOptions({
+    layout: AdminLayout,
 });
-const form = useForm({
-    email: "",
-    name: "",
-    password: "",
-    password_confirmation: "",
-    phone: "",
-    address: "",
-    role_id: 3,
-});
-const searchQuery = ref(props.searchTerm || "");
 const isAddProducts = ref(false);
 const dialogVisible = ref(false);
 const editMode = ref(false);
@@ -33,23 +19,7 @@ const openEditModal = () => {
     isAddProducts.value = false;
     dialogVisible.value = true;
 };
-const handleCreateUser = () => {
-    form.post(route("admin.users.store"), {
-        onSuccess: (page) => {
-            Swal.fire({
-                toast: true,
-                icon: "success",
-                position: "top-end",
-                showConfirmButton: false,
-                title: page.props.flash.success,
-                timer: 1500,
-            });
-            form.reset();
-            dialogVisible.value = false;
-        },
-    });
-    // console.log(form);
-};
+
 const testClick = () => {
     Swal.fire({
         title: "Are you sure?",
@@ -69,78 +39,9 @@ const testClick = () => {
         }
     });
 };
-
-const handleEditUser = (user) => {
-    form.id = user.id;
-    form.name = user.name;
-    form.email = user.email;
-    form.phone = user.phone;
-    form.address = user.address;
-    form.role_id = user.role_id;
-    openEditModal();
-    // console.log(form);
-};
-const updateUser = () => {
-    console.log(form);
-
-    form.put(route("admin.users.update", { id: form.id }), {
-        onSuccess: (page) => {
-            form.reset();
-            dialogVisible.value = false;
-            Swal.fire({
-                toast: true,
-                icon: "success",
-                position: "top-end",
-                showConfirmButton: false,
-                title: page.props.flash.success,
-                timer: 1500,
-            });
-        },
-    });
-};
-const handleClose = () => {
-    form.clearErrors();
-    form.reset();
-    dialogVisible.value = false;
-};
-
-const deleteUser = (user) => {
-    Swal.fire({
-        title: "Are you sure?",
-        text: "You won't be able to revert this!",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Yes, delete it!",
-    }).then((result) => {
-        if (result.isConfirmed) {
-            router.delete(`users/${user.id}/delete`, {
-                onSuccess: (page) => {
-                    Swal.fire({
-                        title: "Deleted!",
-                        text: page.props.flash.success,
-                        icon: "success",
-                    });
-                },
-            });
-        }
-    });
-};
-// Search
-const handleSearch = (value) => {
-    // console.log(value);
-    if (searchQuery.value === props.searchTerm) {
-        return;
-    }
-    // console.log(123);
-    router.get(route("admin.users"), { search: searchQuery.value });
-};
 </script>
-
 <template>
     <!-- Dialog Form Create or Edit User -->
-
     <el-dialog
         v-model="dialogVisible"
         :title="editMode ? 'Edit User' : 'Create User'"
@@ -149,101 +50,50 @@ const handleSearch = (value) => {
     >
         <!-- Form -->
 
-        <form
-            class="max-w-md mx-auto"
-            @submit.prevent="editMode ? updateUser() : handleCreateUser()"
-        >
+        <form class="max-w-md mx-auto">
             <div class="relative z-0 w-full mb-5 group">
                 <input
-                    type="text"
+                    type="email"
                     name="floating_email"
                     id="floating_email"
                     class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                     placeholder=" "
-                    v-model="form.email"
                 />
                 <label
                     for="floating_email"
-                    class="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-8 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-8"
-                    >Email <span class="text-red-500">*</span></label
+                    class="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                    >Email address</label
                 >
-                <span class="text-red-400" v-if="form.errors.email">{{
-                    form.errors.email
-                }}</span>
             </div>
             <div class="relative z-0 w-full mb-5 group">
-                <input
-                    type="text"
-                    name="floating_name"
-                    id="floating_name"
-                    class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                    placeholder=" "
-                    v-model="form.name"
-                />
-                <label
-                    for="floating_name"
-                    class="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-8 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-8"
-                    >Họ Tên <span class="text-red-500">*</span></label
-                >
-                <span class="text-red-400" v-if="form.errors.name">{{
-                    form.errors.email
-                }}</span>
-            </div>
-            <div class="relative z-0 w-full mb-5 group" v-if="!editMode">
                 <input
                     type="password"
                     name="floating_password"
                     id="floating_password"
                     class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                     placeholder=" "
-                    v-model="form.password"
                 />
                 <label
                     for="floating_password"
-                    class="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-8 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-8"
-                    >Mật khẩu <span class="text-red-500">*</span></label
+                    class="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                    >Password</label
                 >
-                <span class="text-red-400" v-if="form.errors.password">{{
-                    form.errors.password
-                }}</span>
             </div>
-            <div class="relative z-0 w-full mb-5 group" v-if="!editMode">
+            <div class="relative z-0 w-full mb-5 group">
                 <input
                     type="password"
                     name="repeat_password"
                     id="floating_repeat_password"
                     class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                     placeholder=" "
-                    v-model="form.password_confirmation"
                 />
                 <label
                     for="floating_repeat_password"
-                    class="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-8 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-8"
-                    >Nhập lại mật khẩu
-                    <span class="text-red-500">*</span></label
+                    class="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                    >Confirm password</label
                 >
             </div>
-            <div class="mb-4">
-                <label
-                    for="roles"
-                    class="block mb-2 text-sm font-medium text-gray-500"
-                    >Roles <span class="text-red-500">*</span></label
-                >
-                <select
-                    id="roles"
-                    v-model="form.role_id"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                >
-                    <option
-                        v-for="role in roles"
-                        :key="role.id"
-                        :value="role.id"
-                    >
-                        {{ role.name }}
-                    </option>
-                </select>
-            </div>
-            <!-- <div class="grid md:grid-cols-2 md:gap-6">
+            <div class="grid md:grid-cols-2 md:gap-6">
                 <div class="relative z-0 w-full mb-5 group">
                     <input
                         type="text"
@@ -254,12 +104,9 @@ const handleSearch = (value) => {
                     />
                     <label
                         for="floating_first_name"
-                        class="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-8 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-8"
-                        >First name <span class="text-red-500">*</span></label
+                        class="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                        >First name</label
                     >
-                    <span class="text-red-400" v-if="form.errors.name">{{
-                        form.errors.name
-                    }}</span>
                 </div>
                 <div class="relative z-0 w-full mb-5 group">
                     <input
@@ -271,53 +118,45 @@ const handleSearch = (value) => {
                     />
                     <label
                         for="floating_last_name"
-                        class="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-8 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-8"
+                        class="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
                         >Last name</label
                     >
                 </div>
-            </div> -->
+            </div>
             <div class="grid md:grid-cols-2 md:gap-6">
                 <div class="relative z-0 w-full mb-5 group">
                     <input
                         type="tel"
+                        pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
                         name="floating_phone"
                         id="floating_phone"
                         class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                         placeholder=" "
-                        v-model="form.phone"
                     />
                     <label
                         for="floating_phone"
-                        class="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-8 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-8"
-                        >Số điện thoại
-                    </label>
-                    <span class="text-red-400" v-if="form.errors.phone">{{
-                        form.errors.phone
-                    }}</span>
+                        class="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                        >Phone number (123-456-7890)</label
+                    >
                 </div>
                 <div class="relative z-0 w-full mb-5 group">
                     <input
                         type="text"
                         name="floating_company"
                         id="floating_company"
-                        v-model="form.address"
                         class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                         placeholder=" "
                     />
                     <label
                         for="floating_company"
-                        class="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-8 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-8"
-                        >Địa chỉ (số nhà tại TP Đà Nẵng)</label
+                        class="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                        >Company (Ex. Google)</label
                     >
-                    <span class="text-red-400" v-if="form.errors.address">{{
-                        form.errors.address
-                    }}</span>
                 </div>
             </div>
             <button
                 type="submit"
-                :disabled="form.processing"
-                class="disabled:bg-gray-400 disabled:cursor-not-allowed text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 ml-auto block"
+                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
             >
                 Submit
             </button>
@@ -325,17 +164,16 @@ const handleSearch = (value) => {
 
         <!-- End Form -->
 
-        <!-- <template #footer>
+        <template #footer>
             <div class="dialog-footer">
                 <el-button @click="dialogVisible = false">Cancel</el-button>
                 <el-button type="primary" @click="dialogVisible = false">
                     Confirm
                 </el-button>
             </div>
-        </template> -->
+        </template>
     </el-dialog>
     <!-- End Dialog Form Create or Edit User -->
-    <!-- <h1 class="text-red-500 z-20">{{ searchQuery }}</h1> -->
     <section class="bg-gray-50">
         <div class="mx-auto max-w-screen-xl">
             <!-- Start coding here -->
@@ -345,12 +183,39 @@ const handleSearch = (value) => {
                 <div
                     class="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4"
                 >
-                    <!-- Search -->
-                    <FormSearch
-                        v-model="searchQuery"
-                        @onSearch="handleSearch"
-                    />
-                    <!-- End Search -->
+                    <div class="w-full md:w-1/2">
+                        <form class="flex items-center">
+                            <label for="simple-search" class="sr-only"
+                                >Search</label
+                            >
+                            <div class="relative w-full">
+                                <div
+                                    class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"
+                                >
+                                    <svg
+                                        aria-hidden="true"
+                                        class="w-5 h-5 text-gray-500"
+                                        fill="currentColor"
+                                        viewbox="0 0 20 20"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                        <path
+                                            fill-rule="evenodd"
+                                            d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                                            clip-rule="evenodd"
+                                        />
+                                    </svg>
+                                </div>
+                                <input
+                                    type="text"
+                                    id="simple-search"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2"
+                                    placeholder="Search"
+                                    required=""
+                                />
+                            </div>
+                        </form>
+                    </div>
                     <div
                         class="w-full md:w-auto flex flex-col md:flex-row space-y-2 md:space-y-0 items-stretch md:items-center justify-end md:space-x-3 flex-shrink-0"
                     >
@@ -545,47 +410,33 @@ const handleSearch = (value) => {
                             class="text-xs text-gray-700 uppercase bg-gray-50"
                         >
                             <tr>
-                                <th scope="col" class="px-4 py-3">Tên</th>
-                                <th scope="col" class="px-4 py-3">Email</th>
-                                <th scope="col" class="px-4 py-3">Quyền</th>
                                 <th scope="col" class="px-4 py-3">
-                                    Số điện thoại
+                                    Product name
                                 </th>
-                                <th scope="col" class="px-4 py-3">Địa chỉ</th>
+                                <th scope="col" class="px-4 py-3">Category</th>
+                                <th scope="col" class="px-4 py-3">Brand</th>
+                                <th scope="col" class="px-4 py-3">
+                                    Description
+                                </th>
+                                <th scope="col" class="px-4 py-3">Price</th>
                                 <th scope="col" class="px-4 py-3">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr
-                                class="border-b"
-                                v-for="user in users.data"
-                                :key="user.id"
-                            >
+                            <tr class="border-b">
                                 <th
                                     scope="row"
                                     class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap"
                                 >
-                                    {{ user.name }}
+                                    Apple iMac 27&#34;
                                 </th>
-                                <td class="px-4 py-3">{{ user.email }}</td>
-                                <td class="px-4 py-3">{{ user.role.name }}</td>
-                                <td class="px-4 py-3">
-                                    {{
-                                        user.phone
-                                            ? user.phone
-                                            : "Chưa cập nhật"
-                                    }}
-                                </td>
-                                <td class="px-4 py-3">
-                                    {{
-                                        user.address
-                                            ? user.address
-                                            : "Chưa cập nhật"
-                                    }}
-                                </td>
+                                <td class="px-4 py-3">PC</td>
+                                <td class="px-4 py-3">Apple</td>
+                                <td class="px-4 py-3">300</td>
+                                <td class="px-4 py-3">$2999</td>
                                 <td class="px-4 py-3 flex items-center gap-4">
                                     <div>
-                                        <button @click="handleEditUser(user)">
+                                        <button @click="openEditModal">
                                             <svg
                                                 class="size-5 text-gray-800"
                                                 aria-hidden="true"
@@ -604,7 +455,7 @@ const handleSearch = (value) => {
                                                 />
                                             </svg>
                                         </button>
-                                        <button @click="deleteUser(user)">
+                                        <button @click="testClick">
                                             <svg
                                                 class="size-5 text-gray-800"
                                                 aria-hidden="true"
@@ -629,6 +480,97 @@ const handleSearch = (value) => {
                         </tbody>
                     </table>
                 </div>
+                <nav
+                    class="flex flex-col md:flex-row justify-between items-start md:items-center space-y-3 md:space-y-0 p-4"
+                    aria-label="Table navigation"
+                >
+                    <span class="text-sm font-normal text-gray-500">
+                        Showing
+                        <span class="font-semibold text-gray-900">1-10</span>
+                        of
+                        <span class="font-semibold text-gray-900">1000</span>
+                    </span>
+                    <ul class="inline-flex items-stretch -space-x-px">
+                        <li>
+                            <a
+                                href="#"
+                                class="flex items-center justify-center h-full py-1.5 px-3 ml-0 text-gray-500 bg-white rounded-l-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700"
+                            >
+                                <span class="sr-only">Previous</span>
+                                <svg
+                                    class="w-5 h-5"
+                                    aria-hidden="true"
+                                    fill="currentColor"
+                                    viewbox="0 0 20 20"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path
+                                        fill-rule="evenodd"
+                                        d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                                        clip-rule="evenodd"
+                                    />
+                                </svg>
+                            </a>
+                        </li>
+                        <li>
+                            <a
+                                href="#"
+                                class="flex items-center justify-center text-sm py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700"
+                                >1</a
+                            >
+                        </li>
+                        <li>
+                            <a
+                                href="#"
+                                class="flex items-center justify-center text-sm py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700"
+                                >2</a
+                            >
+                        </li>
+                        <li>
+                            <a
+                                href="#"
+                                aria-current="page"
+                                class="flex items-center justify-center text-sm z-10 py-2 px-3 leading-tight text-primary-600 bg-primary-50 border border-primary-300 hover:bg-primary-100 hover:text-primary-700"
+                                >3</a
+                            >
+                        </li>
+                        <li>
+                            <a
+                                href="#"
+                                class="flex items-center justify-center text-sm py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700"
+                                >...</a
+                            >
+                        </li>
+                        <li>
+                            <a
+                                href="#"
+                                class="flex items-center justify-center text-sm py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700"
+                                >100</a
+                            >
+                        </li>
+                        <li>
+                            <a
+                                href="#"
+                                class="flex items-center justify-center h-full py-1.5 px-3 leading-tight text-gray-500 bg-white rounded-r-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700"
+                            >
+                                <span class="sr-only">Next</span>
+                                <svg
+                                    class="w-5 h-5"
+                                    aria-hidden="true"
+                                    fill="currentColor"
+                                    viewbox="0 0 20 20"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path
+                                        fill-rule="evenodd"
+                                        d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                                        clip-rule="evenodd"
+                                    />
+                                </svg>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
             </div>
         </div>
     </section>
