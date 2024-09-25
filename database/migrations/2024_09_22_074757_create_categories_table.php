@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('category_name')->unique();
             $table->string('slug')->unique();
             $table->string('category_image')->nullable();
-            $table->text('description')->nullable();
+            // $table->text('description')->nullable();
             $table->integer('sort')->default(1);
             $table->boolean('is_show');
             $table->timestamps();

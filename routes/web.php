@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AuthAdminController;
+use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -25,8 +26,13 @@ Route::prefix('admin')->group(function(){
         Route::put('users/{user}/update',[UserController::class,'update'])->name('admin.users.update');
         Route::delete('users/{id}/delete',[UserController::class,'delete'])->name('admin.users.delete');
         // ================== Products ==================//
-        Route::get('products', function () {
-            return Inertia::render('Admin/Product/Index');
-        })->name('admin.products');
+        Route::get('products',[ProductController::class,'index'])->name('admin.products');
+        Route::get('/products/create',[ProductController::class,'create'])->name('admin.products.create');
+        Route::post('products/create',[ProductController::class,'store'])->name('admin.products.store'); 
+        Route::get('products/{product}/edit',[ProductController::class,'edit'])->name('admin.products.edit'); 
+        Route::put('products/{product}/update',[ProductController::class,'update'])->name('admin.products.update'); 
+        Route::delete('products/{product}/delete',[ProductController::class,'delete'])->name('admin.products.delete');
+        // ================== Categories ==================// 
+        // Route::get('products',[ProductController::class,'index'])->name('admin.categories');
     });
 });

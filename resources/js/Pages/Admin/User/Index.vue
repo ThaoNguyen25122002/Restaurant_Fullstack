@@ -11,6 +11,7 @@ defineProps({
     searchTerm: String,
 });
 </script>
+
 <template>
     <UserList :users="users" :roles="roles" :searchTerm="searchTerm" />
     <pagination-links :paginator="users" />

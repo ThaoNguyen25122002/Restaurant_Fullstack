@@ -37,4 +37,5 @@ class LoginRequest extends FormRequest
             'password.min' => 'Mật khẩu phải có ít nhất :min ký tự.',
         ];
     }
+    
 }
