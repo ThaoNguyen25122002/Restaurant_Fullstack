@@ -14,21 +14,47 @@ use Inertia\Inertia;
 
 class ProductController extends Controller
 {
+    // public function index(Request $request){
+    //     // $products = Product::with('category')->get();
+    //     $products = Product::when($request->search,function($query) use($request){
+    //         $query->where('product_name','like',"%".$request->search."%")->orWhere('description','like',"%".$request->search."%")
+    //         ->orWhere('price','like',"%".$request->search."%");
+    //     })->with('category')->paginate(5)->withQueryString();
+    //     $categories = Category::all();
+    //     // dd($products);
+    //     // dd($url);
+    //     // dd(ProductResource::collection($products));
+    //     return Inertia('Admin/Product/Index',[
+    //         // 'products' => ProductResource::collection($products),
+    //         'products' => $products,
+    //         'searchTerm'=>$request->search,
+    //         'categories' => $categories,
+    //     ]);
+    // }
     public function index(Request $request){
         // $products = Product::with('category')->get();
+        $categorySlug = $request->category;
+
+        $category = Category::where('slug', $categorySlug)->first();
         $products = Product::when($request->search,function($query) use($request){
             $query->where('product_name','like',"%".$request->search."%")->orWhere('description','like',"%".$request->search."%")
             ->orWhere('price','like',"%".$request->search."%");
+        })->when($category, function ($query) use ($category) {
+            $query->where('category_id', $category->id);
         })->with('category')->paginate(5)->withQueryString();
-        // dd($products);
-        // dd($url);
+        $categories = Category::all();
         // dd(ProductResource::collection($products));
         return Inertia('Admin/Product/Index',[
             // 'products' => ProductResource::collection($products),
             'products' => $products,
             'searchTerm'=>$request->search,
+            'categoryTerm'=>$categorySlug,
+            'categories' => $categories,
         ]);
     }
+    // public function filterCategoryProducts(Request $request){
+    //     $products = Product
+    // }
     public function edit(Product $product){
         // dd($product);
         $categories = Category::all();

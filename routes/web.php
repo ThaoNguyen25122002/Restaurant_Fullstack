@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminProfileController;
 use App\Http\Controllers\Admin\AuthAdminController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\ProductController;
@@ -20,6 +21,8 @@ Route::prefix('admin')->group(function(){
         Route::get('dashboard', function () {
             return Inertia::render('Admin/Dashboard/Index');
         })->name('admin.dashboard');
+        // ================== Admin Profile ==================//
+        Route::put('profile/{user}/update',[AdminProfileController::class,'updateProfile'])->name('admin.profile.update');
         Route::post('admin/logout',[AuthAdminController::class,'logout'])->name('admin.logout');
         // ================== Users ==================//
         Route::get('users',[UserController::class,'index'])->name('admin.users');
@@ -33,6 +36,7 @@ Route::prefix('admin')->group(function(){
         Route::get('products/{product}/edit',[ProductController::class,'edit'])->name('admin.products.edit'); 
         Route::put('products/{product}/update',[ProductController::class,'update'])->name('admin.products.update'); 
         Route::delete('products/{product}/delete',[ProductController::class,'delete'])->name('admin.products.delete');
+        // Route::get('products',[ProductController::class,'index'])->name('admin.products.filterCategoryProducts');
         // ================== Categories ==================// 
         Route::get('categories',[CategoryController::class,'index'])->name('admin.categories');
         Route::post('categories/create',[CategoryController::class,'store'])->name('admin.categories.create');

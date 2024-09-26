@@ -1,15 +1,17 @@
 <script setup>
 import { router, useForm } from "@inertiajs/vue3";
-import { ref } from "vue";
+import { ref, watch, watchEffect } from "vue";
 import Swal from "sweetalert2";
 import FormSearch from "@/components/Admin/FormSearch/Index.vue";
 const props = defineProps({
     products: Object,
     searchTerm: String,
+    categoryTerm: String,
+    categories: Array,
 });
 const searchQuery = ref(props.searchTerm || "");
 // console.log(props.products);
-
+const selectedCategories = ref(props.categoryTerm || "");
 const handleDelete = (productId) => {
     Swal.fire({
         title: "Bạn muốn xóa?",
@@ -39,8 +41,36 @@ const handleSearch = (value) => {
         return;
     }
     console.log(123);
-    router.get(route("admin.products"), { search: searchQuery.value });
+    router.get(
+        route("admin.products"),
+        {
+            search: searchQuery.value,
+        },
+        {
+            preserveState: true,
+            replace: true,
+            only: ["products"],
+        }
+    );
 };
+watch(selectedCategories, (newValue) => {
+    router.get(
+        route("admin.products"),
+        {
+            category: newValue,
+        },
+        {
+            preserveState: true,
+            replace: true,
+        }
+    );
+});
+
+// const filteredProducts = () => {
+//     router.get(route("admin.products.filterCategoryProducts"), {
+//         category: selectedCategories.value,
+//     });
+// };
 const formatCurrency = (value) => {
     return new Intl.NumberFormat("vi-VN", {
         style: "currency",
@@ -112,164 +142,26 @@ const formatCurrency = (value) => {
                         <div
                             class="flex items-center space-x-3 w-full md:w-auto"
                         >
-                            <button
-                                id="actionsDropdownButton"
-                                data-dropdown-toggle="actionsDropdown"
-                                class="w-full md:w-auto flex items-center justify-center py-2 px-4 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200"
-                                type="button"
-                            >
-                                <svg
-                                    class="-ml-1 mr-1.5 w-5 h-5"
-                                    fill="currentColor"
-                                    viewbox="0 0 20 20"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    aria-hidden="true"
-                                >
-                                    <path
-                                        clip-rule="evenodd"
-                                        fill-rule="evenodd"
-                                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                    />
-                                </svg>
-                                Actions
-                            </button>
-                            <div
-                                id="actionsDropdown"
-                                class="hidden z-10 w-44 bg-white rounded divide-y divide-gray-100 shadow"
-                            >
-                                <ul
-                                    class="py-1 text-sm text-gray-700"
-                                    aria-labelledby="actionsDropdownButton"
-                                >
-                                    <li>
-                                        <a
-                                            href="#"
-                                            class="block py-2 px-4 hover:bg-gray-100"
-                                            >Mass Edit</a
-                                        >
-                                    </li>
-                                </ul>
-                                <div class="py-1">
-                                    <a
-                                        href="#"
-                                        class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100"
-                                        >Delete all</a
+                            <div class="w-full max-w-xs mx-auto">
+                                <div class="relative mt-1">
+                                    <select
+                                        id="category"
+                                        name="category"
+                                        v-model="selectedCategories"
+                                        class="block w-full pl-3 pr-10 py-2 text-base border border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
                                     >
+                                        <option selected value="">
+                                            Tất cả danh mục
+                                        </option>
+                                        <option
+                                            v-for="category in categories"
+                                            :key="category.id"
+                                            :value="category.slug"
+                                        >
+                                            {{ category.category_name }}
+                                        </option>
+                                    </select>
                                 </div>
-                            </div>
-                            <button
-                                id="filterDropdownButton"
-                                data-dropdown-toggle="filterDropdown"
-                                class="w-full md:w-auto flex items-center justify-center py-2 px-4 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200"
-                                type="button"
-                            >
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    aria-hidden="true"
-                                    class="h-4 w-4 mr-2 text-gray-400"
-                                    viewbox="0 0 20 20"
-                                    fill="currentColor"
-                                >
-                                    <path
-                                        fill-rule="evenodd"
-                                        d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z"
-                                        clip-rule="evenodd"
-                                    />
-                                </svg>
-                                Filter
-                                <svg
-                                    class="-mr-1 ml-1.5 w-5 h-5"
-                                    fill="currentColor"
-                                    viewbox="0 0 20 20"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    aria-hidden="true"
-                                >
-                                    <path
-                                        clip-rule="evenodd"
-                                        fill-rule="evenodd"
-                                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                    />
-                                </svg>
-                            </button>
-                            <div
-                                id="filterDropdown"
-                                class="z-10 hidden w-48 p-3 bg-white rounded-lg shadow"
-                            >
-                                <h6
-                                    class="mb-3 text-sm font-medium text-gray-900"
-                                >
-                                    Choose brand
-                                </h6>
-                                <ul
-                                    class="space-y-2 text-sm"
-                                    aria-labelledby="filterDropdownButton"
-                                >
-                                    <li class="flex items-center">
-                                        <input
-                                            id="apple"
-                                            type="checkbox"
-                                            value=""
-                                            class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 focus:ring-2"
-                                        />
-                                        <label
-                                            for="apple"
-                                            class="ml-2 text-sm font-medium text-gray-900"
-                                            >Apple (56)</label
-                                        >
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input
-                                            id="fitbit"
-                                            type="checkbox"
-                                            value=""
-                                            class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 focus:ring-2"
-                                        />
-                                        <label
-                                            for="fitbit"
-                                            class="ml-2 text-sm font-medium text-gray-900"
-                                            >Microsoft (16)</label
-                                        >
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input
-                                            id="razor"
-                                            type="checkbox"
-                                            value=""
-                                            class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 focus:ring-2"
-                                        />
-                                        <label
-                                            for="razor"
-                                            class="ml-2 text-sm font-medium text-gray-900"
-                                            >Razor (49)</label
-                                        >
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input
-                                            id="nikon"
-                                            type="checkbox"
-                                            value=""
-                                            class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 focus:ring-2"
-                                        />
-                                        <label
-                                            for="nikon"
-                                            class="ml-2 text-sm font-medium text-gray-900"
-                                            >Nikon (12)</label
-                                        >
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input
-                                            id="benq"
-                                            type="checkbox"
-                                            value=""
-                                            class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 focus:ring-2"
-                                        />
-                                        <label
-                                            for="benq"
-                                            class="ml-2 text-sm font-medium text-gray-900"
-                                            >BenQ (74)</label
-                                        >
-                                    </li>
-                                </ul>
                             </div>
                         </div>
                     </div>

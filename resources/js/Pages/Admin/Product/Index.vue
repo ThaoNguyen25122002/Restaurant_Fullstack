@@ -9,6 +9,8 @@ defineOptions({
 defineProps({
     products: Object,
     searchTerm: String,
+    categoryTerm: String,
+    categories: Array,
 });
 // console.log(props.products);
 </script>
@@ -18,6 +20,11 @@ defineProps({
         <img :src="'/storage/' + product.image_url" alt="" />
     </div> -->
     <!-- <img src="/storage/products/1727163886_66f26deeb9ddd.png" alt="" /> -->
-    <ProductList :products="products" :searchTerm="searchTerm" />
+    <ProductList
+        :products="products"
+        :searchTerm="searchTerm"
+        :categoryTerm="categoryTerm"
+        :categories="categories"
+    />
     <pagination-links :paginator="products" />
 </template>

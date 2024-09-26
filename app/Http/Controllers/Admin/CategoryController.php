@@ -12,12 +12,17 @@ use Inertia\Inertia;
 
 class CategoryController extends Controller
 {
-    public function index(){
-        $categories = Category::withCount('products')->get();
+    public function index(Request $request){
+        $categories = Category::when($request->search, function($query) use($request){
+            $query->where('category_name','like','%'.$request->search.'%');
+        })->withCount('products')->paginate(5)->withQueryString();
+        // dd($categories);
         // dd($categories);
         // dd($categories);
         return Inertia('Admin/Category/Index',[
             "categories" => $categories,
+            'searchTerm' => $request->search,
+            'categoryTerm' => $request->category
         ]);
     }
 

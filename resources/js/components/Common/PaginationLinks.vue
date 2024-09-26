@@ -20,8 +20,8 @@ const makeLabel = (label) => {
 <template>
     <div class="flex justify-between items-start my-4">
         <p class="text-slate-600 text-sm">
-            Showing {{ paginator.from }} to {{ paginator.to }} of
-            {{ paginator.total }} results
+            Hiển thị từ {{ paginator.from }} đến {{ paginator.to }} của
+            {{ paginator.total }} kết quả.
         </p>
         <div class="flex items-center rounded-md overflow-hidden shadow-lg">
             <div v-for="(link, index) in paginator.links" :key="index">

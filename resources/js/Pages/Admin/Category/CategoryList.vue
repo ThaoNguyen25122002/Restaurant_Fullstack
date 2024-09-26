@@ -6,8 +6,9 @@ import FormSearch from "@/components/Admin/FormSearch/Index.vue";
 
 const page = usePage();
 // const categories = ref(page.props.categories);
-defineProps({
+const props = defineProps({
     categories: Array,
+    searchTerm: String,
 });
 // console.log(categories.value);
 const fileInput = ref(null);
@@ -19,7 +20,7 @@ const form = useForm({
     sort: 1,
     is_show: 1,
 });
-// const searchQuery = ref(props.searchTerm || "");
+const searchQuery = ref(props.searchTerm || "");
 const isAddProducts = ref(false);
 const dialogVisible = ref(false);
 const editMode = ref(false);
@@ -117,7 +118,7 @@ const handleSearch = (value) => {
         return;
     }
     // console.log(123);
-    router.get(route("admin.users"), { search: searchQuery.value });
+    router.get(route("admin.categories"), { search: searchQuery.value });
 };
 </script>
 
@@ -234,7 +235,7 @@ const handleSearch = (value) => {
         </template> -->
     </el-dialog>
     <!-- End Dialog Form Create or Edit User -->
-    <!-- <h1 class="text-red-500 z-20">{{ searchQuery }}</h1> -->
+
     <section class="bg-gray-50">
         <div class="mx-auto max-w-screen-xl">
             <!-- Start coding here -->
@@ -245,7 +246,10 @@ const handleSearch = (value) => {
                     class="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4"
                 >
                     <!-- Search -->
-                    <FormSearch @onSearch="handleSearch" />
+                    <FormSearch
+                        @onSearch="handleSearch"
+                        v-model="searchQuery"
+                    />
                     <!-- End Search -->
                     <div
                         class="w-full md:w-auto flex flex-col md:flex-row space-y-2 md:space-y-0 items-stretch md:items-center justify-end md:space-x-3 flex-shrink-0"
@@ -255,25 +259,32 @@ const handleSearch = (value) => {
                             type="button"
                             class="flex items-center justify-center text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2 focus:outline-none"
                         >
-                            <svg
-                                class="h-3.5 w-3.5 mr-2"
-                                fill="currentColor"
-                                viewbox="0 0 20 20"
-                                xmlns="http://www.w3.org/2000/svg"
-                                aria-hidden="true"
-                            >
-                                <path
-                                    clip-rule="evenodd"
-                                    fill-rule="evenodd"
-                                    d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
-                                />
-                            </svg>
-                            Add product
+                            Tạo Danh Mục
                         </button>
                         <div
                             class="flex items-center space-x-3 w-full md:w-auto"
                         >
-                            <button
+                            <!-- <div class="w-full max-w-xs mx-auto">
+                                <div class="relative mt-1">
+                                    <select
+                                        id="category"
+                                        name="category"
+                                        class="block w-full pl-3 pr-10 py-2 text-base border border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
+                                    >
+                                        <option selected>
+                                            Tất cả danh mục
+                                        </option>
+                                        <option
+                                            v-for="category in categories"
+                                            :key="category.id"
+                                            :value="category.id"
+                                        >
+                                            {{ category.category_name }}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div> -->
+                            <!-- <button
                                 id="actionsDropdownButton"
                                 data-dropdown-toggle="actionsDropdown"
                                 class="w-full md:w-auto flex items-center justify-center py-2 px-4 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200"
@@ -317,121 +328,7 @@ const handleSearch = (value) => {
                                         >Delete all</a
                                     >
                                 </div>
-                            </div>
-                            <button
-                                id="filterDropdownButton"
-                                data-dropdown-toggle="filterDropdown"
-                                class="w-full md:w-auto flex items-center justify-center py-2 px-4 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200"
-                                type="button"
-                            >
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    aria-hidden="true"
-                                    class="h-4 w-4 mr-2 text-gray-400"
-                                    viewbox="0 0 20 20"
-                                    fill="currentColor"
-                                >
-                                    <path
-                                        fill-rule="evenodd"
-                                        d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z"
-                                        clip-rule="evenodd"
-                                    />
-                                </svg>
-                                Filter
-                                <svg
-                                    class="-mr-1 ml-1.5 w-5 h-5"
-                                    fill="currentColor"
-                                    viewbox="0 0 20 20"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    aria-hidden="true"
-                                >
-                                    <path
-                                        clip-rule="evenodd"
-                                        fill-rule="evenodd"
-                                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                    />
-                                </svg>
-                            </button>
-                            <div
-                                id="filterDropdown"
-                                class="z-10 hidden w-48 p-3 bg-white rounded-lg shadow"
-                            >
-                                <h6
-                                    class="mb-3 text-sm font-medium text-gray-900"
-                                >
-                                    Choose brand
-                                </h6>
-                                <ul
-                                    class="space-y-2 text-sm"
-                                    aria-labelledby="filterDropdownButton"
-                                >
-                                    <li class="flex items-center">
-                                        <input
-                                            id="apple"
-                                            type="checkbox"
-                                            value=""
-                                            class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 focus:ring-2"
-                                        />
-                                        <label
-                                            for="apple"
-                                            class="ml-2 text-sm font-medium text-gray-900"
-                                            >Apple (56)</label
-                                        >
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input
-                                            id="fitbit"
-                                            type="checkbox"
-                                            value=""
-                                            class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 focus:ring-2"
-                                        />
-                                        <label
-                                            for="fitbit"
-                                            class="ml-2 text-sm font-medium text-gray-900"
-                                            >Microsoft (16)</label
-                                        >
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input
-                                            id="razor"
-                                            type="checkbox"
-                                            value=""
-                                            class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 focus:ring-2"
-                                        />
-                                        <label
-                                            for="razor"
-                                            class="ml-2 text-sm font-medium text-gray-900"
-                                            >Razor (49)</label
-                                        >
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input
-                                            id="nikon"
-                                            type="checkbox"
-                                            value=""
-                                            class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 focus:ring-2"
-                                        />
-                                        <label
-                                            for="nikon"
-                                            class="ml-2 text-sm font-medium text-gray-900"
-                                            >Nikon (12)</label
-                                        >
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input
-                                            id="benq"
-                                            type="checkbox"
-                                            value=""
-                                            class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 focus:ring-2"
-                                        />
-                                        <label
-                                            for="benq"
-                                            class="ml-2 text-sm font-medium text-gray-900"
-                                            >BenQ (74)</label
-                                        >
-                                    </li>
-                                </ul>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
                 </div>
