@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AuthAdminController;
+use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
@@ -33,6 +34,8 @@ Route::prefix('admin')->group(function(){
         Route::put('products/{product}/update',[ProductController::class,'update'])->name('admin.products.update'); 
         Route::delete('products/{product}/delete',[ProductController::class,'delete'])->name('admin.products.delete');
         // ================== Categories ==================// 
-        // Route::get('products',[ProductController::class,'index'])->name('admin.categories');
+        Route::get('categories',[CategoryController::class,'index'])->name('admin.categories');
+        Route::post('categories/create',[CategoryController::class,'store'])->name('admin.categories.create');
+        Route::post('categories/{category}/update',[CategoryController::class,'update'])->name('admin.categories.update');
     });
 });

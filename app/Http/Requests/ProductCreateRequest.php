@@ -23,7 +23,7 @@ class ProductCreateRequest extends FormRequest
     {
         return [
             'product_name' => ['required', 'max:100', 'unique:products,product_name'],
-            'category_id' => ['required', 'exists:roles,id'],
+            'category_id' => ['required', 'exists:categories,id'],
             'description' => ['required', 'max:250'],
             'price' => ['required', 'numeric'],
             'in_stock' => ['required'],

@@ -1,78 +1,240 @@
 <script setup>
-import { router, useForm } from "@inertiajs/vue3";
+import { router, useForm, usePage } from "@inertiajs/vue3";
 import { ref } from "vue";
 import Swal from "sweetalert2";
 import FormSearch from "@/components/Admin/FormSearch/Index.vue";
-const props = defineProps({
-    products: Object,
-    searchTerm: String,
-});
-const searchQuery = ref(props.searchTerm || "");
-// console.log(props.products);
 
-const handleDelete = (productId) => {
-    Swal.fire({
-        title: "Bạn muốn xóa?",
-        text: "Bạn không thể khôi phục nếu xóa!",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Yes, delete it!",
-    }).then((result) => {
-        if (result.isConfirmed) {
-            router.delete(route("admin.products.delete", { id: productId }), {
-                onSuccess: (page) => {
-                    Swal.fire({
-                        title: "Deleted!",
-                        text: page.props.flash.success,
-                        icon: "success",
-                    });
-                },
+const page = usePage();
+// const categories = ref(page.props.categories);
+defineProps({
+    categories: Array,
+});
+// console.log(categories.value);
+const fileInput = ref(null);
+const form = useForm({
+    id: null,
+    category_name: "",
+    category_image: null,
+    newImage: null,
+    sort: 1,
+    is_show: 1,
+});
+// const searchQuery = ref(props.searchTerm || "");
+const isAddProducts = ref(false);
+const dialogVisible = ref(false);
+const editMode = ref(false);
+const imagePreview = ref(null);
+const openAddModal = () => {
+    isAddProducts.value = true;
+    dialogVisible.value = true;
+    editMode.value = false;
+};
+const openEditModal = () => {
+    editMode.value = true;
+    isAddProducts.value = false;
+    dialogVisible.value = true;
+};
+const showEditCategory = (category) => {
+    openEditModal();
+    // form = category;
+    // console.log(form);
+    form.category_name = category.category_name;
+    form.category_image = category.category_image;
+    // imagePreview.value = category.category_name;
+    form.sort = category.sort;
+    form.is_show = category.is_show;
+    // form._method = "PUT";
+    form.id = category.id;
+};
+const handleClose = () => {
+    if (imagePreview.value) {
+        fileInput.value.value = null;
+        URL.revokeObjectURL(imagePreview.value);
+        imagePreview.value = null;
+    }
+    form.clearErrors();
+    form.reset();
+    dialogVisible.value = false;
+};
+
+const updateCategory = () => {
+    console.log(form);
+    form.post(route("admin.categories.update", { id: form.id }), {
+        onSuccess: (page) => {
+            form.reset();
+            Swal.fire({
+                toast: true,
+                icon: "success",
+                position: "top-end",
+                showConfirmButton: false,
+                title: page.props.flash.success,
+                timer: 1500,
             });
-        }
+            handleClose();
+        },
     });
 };
+const createCategory = () => {
+    // console.log(form);
+    form.post(route("admin.categories.create"), {
+        onSuccess: (page) => {
+            Swal.fire({
+                toast: true,
+                icon: "success",
+                position: "top-end",
+                showConfirmButton: false,
+                title: page.props.flash.success,
+                timer: 1500,
+            });
+            handleClose();
+        },
+    });
+};
+
+const onChange = (event) => {
+    const file = event.target.files[0];
+
+    if (imagePreview.value) {
+        URL.revokeObjectURL(imagePreview.value);
+    }
+    console.log(form);
+    if (file && file.type.startsWith("image/")) {
+        form.clearErrors("category_image");
+        imagePreview.value = URL.createObjectURL(file);
+
+        if (editMode.value) {
+            form.newImage = file;
+        } else {
+            form.category_image = file;
+        }
+    }
+    console.log(form);
+};
+// Search
 const handleSearch = (value) => {
     // console.log(value);
     if (searchQuery.value === props.searchTerm) {
         return;
     }
-    console.log(123);
-    router.get(route("admin.products"), { search: searchQuery.value });
+    // console.log(123);
+    router.get(route("admin.users"), { search: searchQuery.value });
 };
-const formatCurrency = (value) => {
-    return new Intl.NumberFormat("vi-VN", {
-        style: "currency",
-        currency: "VND",
-    }).format(value);
-};
-// const testClick = () => {
-//     Swal.fire({
-//         title: "Are you sure?",
-//         text: "You won't be able to revert this!",
-//         icon: "warning",
-//         showCancelButton: true,
-//         confirmButtonColor: "#3085d6",
-//         cancelButtonColor: "#d33",
-//         confirmButtonText: "Yes, delete it!",
-//     }).then((result) => {
-//         if (result.isConfirmed) {
-//             Swal.fire({
-//                 title: "Deleted!",
-//                 text: "Your file has been deleted.",
-//                 icon: "success",
-//             });
-//         }
-//     });
-// };
 </script>
 
 <template>
-    <!-- <img
-        src="http://127.0.0.1:8000/storage/products/default.jpg"
-        alt="Product Image"
-    /> -->
+    <!-- Dialog Form Create or Edit User -->
+
+    <el-dialog
+        v-model="dialogVisible"
+        :title="editMode ? 'Cập Nhật Danh Mục' : 'Tạo Danh Mục'"
+        width="500"
+        :before-close="handleClose"
+    >
+        <!-- Form -->
+
+        <form @submit.prevent="editMode ? updateCategory() : createCategory()">
+            <div class="mb-2">
+                <label
+                    for="category"
+                    class="block mb-2 text-sm font-medium text-gray-900"
+                    >Danh mục</label
+                >
+                <input
+                    type="text"
+                    id="category"
+                    v-model="form.category_name"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                    placeholder="Tên danh mục"
+                />
+                <small class="text-red-400">{{
+                    form.errors.category_name
+                }}</small>
+            </div>
+            <div class="grid gap-6 mb-2 md:grid-cols-2">
+                <div>
+                    <label
+                        for="sort"
+                        class="block mb-2 text-sm font-medium text-gray-900"
+                        >Độ Ưu Tiên</label
+                    >
+                    <input
+                        type="text"
+                        id="sort"
+                        v-model="form.sort"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                        placeholder="Từ Cao -> Thấp"
+                    />
+                </div>
+                <div>
+                    <label
+                        for="is_show"
+                        class="block mb-2 text-sm font-medium text-gray-900"
+                        >Trạng Thái</label
+                    >
+                    <select
+                        id="is_show"
+                        v-model="form.is_show"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                    >
+                        <option selected value="1">Hiện</option>
+                        <option value="0">Ẩn</option>
+                    </select>
+                </div>
+            </div>
+            <div class="mb-4">
+                <label
+                    class="block mb-2 text-sm font-medium text-gray-900"
+                    for="file_input"
+                    >Upload file</label
+                >
+                <input
+                    class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50"
+                    id="file_input"
+                    type="file"
+                    ref="fileInput"
+                    @change="onChange"
+                />
+                <small class="text-red-400">{{
+                    form.errors.category_image
+                }}</small>
+            </div>
+            <div class="flex items-end justify-between">
+                <div class="shadow-xl">
+                    <img
+                        v-if="imagePreview"
+                        :src="imagePreview"
+                        alt=""
+                        class="size-20 rounded-lg object-cover"
+                    />
+                    <img
+                        v-else-if="form.category_image"
+                        :src="'/storage/' + form.category_image"
+                        alt=""
+                        class="size-20 rounded-lg object-cover"
+                    />
+                </div>
+                <button
+                    type="submit"
+                    class="text-white text-end mt-4 max-h-10 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5"
+                >
+                    {{ editMode ? "Cập nhật" : "Tạo danh mục" }}
+                </button>
+            </div>
+        </form>
+
+        <!-- End Form -->
+
+        <!-- <template #footer>
+            <div class="dialog-footer">
+                <el-button @click="dialogVisible = false">Cancel</el-button>
+                <el-button type="primary" @click="dialogVisible = false">
+                    Confirm
+                </el-button>
+            </div>
+        </template> -->
+    </el-dialog>
+    <!-- End Dialog Form Create or Edit User -->
+    <!-- <h1 class="text-red-500 z-20">{{ searchQuery }}</h1> -->
     <section class="bg-gray-50">
         <div class="mx-auto max-w-screen-xl">
             <!-- Start coding here -->
@@ -82,15 +244,14 @@ const formatCurrency = (value) => {
                 <div
                     class="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4"
                 >
-                    <FormSearch
-                        v-model="searchQuery"
-                        @onSearch="handleSearch"
-                    />
+                    <!-- Search -->
+                    <FormSearch @onSearch="handleSearch" />
+                    <!-- End Search -->
                     <div
                         class="w-full md:w-auto flex flex-col md:flex-row space-y-2 md:space-y-0 items-stretch md:items-center justify-end md:space-x-3 flex-shrink-0"
                     >
-                        <Link
-                            :href="route('admin.products.create')"
+                        <button
+                            @click="openAddModal"
                             type="button"
                             class="flex items-center justify-center text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2 focus:outline-none"
                         >
@@ -108,7 +269,7 @@ const formatCurrency = (value) => {
                                 />
                             </svg>
                             Add product
-                        </Link>
+                        </button>
                         <div
                             class="flex items-center space-x-3 w-full md:w-auto"
                         >
@@ -281,11 +442,9 @@ const formatCurrency = (value) => {
                         >
                             <tr>
                                 <th scope="col" class="px-4 py-3">Ảnh</th>
-                                <th scope="col" class="px-4 py-3">Tên món</th>
-                                <th scope="col" class="px-4 py-3">Giá</th>
-                                <th scope="col" class="px-4 py-3">
-                                    Thuộc danh mục
-                                </th>
+                                <th scope="col" class="px-4 py-3">Danh Mục</th>
+                                <th scope="col" class="px-4 py-3">Sản Phẩm</th>
+                                <th scope="col" class="px-4 py-3">Ưu Tiên</th>
                                 <th scope="col" class="px-4 py-3">
                                     Trạng Thái
                                 </th>
@@ -295,40 +454,36 @@ const formatCurrency = (value) => {
                         <tbody>
                             <tr
                                 class="border-b"
-                                v-for="product in products.data"
-                                :key="product.id"
+                                v-for="category in categories"
+                                :key="category.id"
                             >
-                                <th class="rounded-sm ml-3 py-2">
+                                <td
+                                    scope="row"
+                                    class="pl-1 py-3 font-medium text-gray-900 whitespace-nowrap size-16"
+                                >
                                     <img
-                                        :src="'/storage/' + product.image_url"
-                                        alt="avatar"
-                                        class="size-16 object-cover rounded-xl shadow-xl"
+                                        class="w-full rounded-md shadow-xl object-cover"
+                                        :src="
+                                            '/storage/' +
+                                            category.category_image
+                                        "
+                                        alt="category image"
                                     />
-                                </th>
-                                <td class="px-4 py-3">
-                                    {{ product.product_name }}
                                 </td>
                                 <td class="px-4 py-3">
-                                    {{ formatCurrency(product.price) }}
+                                    {{ category.category_name }}
                                 </td>
                                 <td class="px-4 py-3">
-                                    {{ product.category.category_name }}
+                                    {{ category.products_count }}
                                 </td>
+                                <td class="px-4 py-3">{{ category.sort }}</td>
                                 <td class="px-4 py-3">
-                                    {{
-                                        product.in_stock === 1
-                                            ? "Còn món"
-                                            : "Hết món"
-                                    }}
+                                    {{ category.is_show ? "Hiển thị" : "Ẩn" }}
                                 </td>
-                                <td class="px-4 py-3">
-                                    <div class="flex items-center">
-                                        <Link
-                                            :href="
-                                                route('admin.products.edit', {
-                                                    id: product.id,
-                                                })
-                                            "
+                                <td class="px-4 py-3 flex items-start mt-4">
+                                    <div flex>
+                                        <button
+                                            @click="showEditCategory(category)"
                                         >
                                             <svg
                                                 class="size-5 text-gray-800"
@@ -347,10 +502,8 @@ const formatCurrency = (value) => {
                                                     d="m14.304 4.844 2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 0 1 2.852 0Z"
                                                 />
                                             </svg>
-                                        </Link>
-                                        <button
-                                            @click="handleDelete(product.id)"
-                                        >
+                                        </button>
+                                        <button @click="deleteUser(user)">
                                             <svg
                                                 class="size-5 text-gray-800"
                                                 aria-hidden="true"

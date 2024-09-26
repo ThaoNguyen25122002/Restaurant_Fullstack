@@ -102,8 +102,8 @@ const toggle = ref(false);
                     </ul>
                 </li>
                 <li>
-                    <a
-                        href="#"
+                    <Link
+                        :href="route('admin.categories')"
                         class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
                     >
                         <svg
@@ -124,7 +124,7 @@ const toggle = ref(false);
                             class="inline-flex items-center justify-center px-2 ms-3 text-sm font-medium text-gray-800 bg-gray-100 rounded-full dark:bg-gray-700 dark:text-gray-300"
                             >Pro</span
                         >
-                    </a>
+                    </Link>
                 </li>
                 <li>
                     <a
