@@ -35,6 +35,36 @@ const handleDelete = (productId) => {
         }
     });
 };
+const resetQuantity = () => {
+    Swal.fire({
+        title: "Bạn muốn reset số lượng tất cả các món?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Reset",
+    }).then((result) => {
+        if (result.isConfirmed) {
+            router.post(
+                route("admin.products.setQuantity"),
+                {},
+                {
+                    onSuccess: (page) => {
+                        console.log(123);
+                        Swal.fire({
+                            toast: true,
+                            icon: "success",
+                            position: "top-end",
+                            showConfirmButton: false,
+                            title: page.props.flash.success,
+                            timer: 1500,
+                        });
+                    },
+                }
+            );
+        }
+    });
+};
 const handleSearch = (value) => {
     // console.log(value);
     if (searchQuery.value === props.searchTerm) {
@@ -104,7 +134,7 @@ const formatCurrency = (value) => {
         alt="Product Image"
     /> -->
     <section class="bg-gray-50">
-        <div class="mx-auto max-w-screen-xl">
+        <div class="mx-auto max-w-screen">
             <!-- Start coding here -->
             <div
                 class="bg-white relative shadow-md sm:rounded-lg overflow-hidden"
@@ -119,25 +149,18 @@ const formatCurrency = (value) => {
                     <div
                         class="w-full md:w-auto flex flex-col md:flex-row space-y-2 md:space-y-0 items-stretch md:items-center justify-end md:space-x-3 flex-shrink-0"
                     >
+                        <button
+                            @click="resetQuantity"
+                            class="flex items-center justify-center text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2 focus:outline-none"
+                        >
+                            Reset số lượng
+                        </button>
                         <Link
                             :href="route('admin.products.create')"
                             type="button"
                             class="flex items-center justify-center text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2 focus:outline-none"
                         >
-                            <svg
-                                class="h-3.5 w-3.5 mr-2"
-                                fill="currentColor"
-                                viewbox="0 0 20 20"
-                                xmlns="http://www.w3.org/2000/svg"
-                                aria-hidden="true"
-                            >
-                                <path
-                                    clip-rule="evenodd"
-                                    fill-rule="evenodd"
-                                    d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
-                                />
-                            </svg>
-                            Add product
+                            Thêm món mới
                         </Link>
                         <div
                             class="flex items-center space-x-3 w-full md:w-auto"
@@ -178,9 +201,7 @@ const formatCurrency = (value) => {
                                 <th scope="col" class="px-4 py-3">
                                     Thuộc danh mục
                                 </th>
-                                <th scope="col" class="px-4 py-3">
-                                    Trạng Thái
-                                </th>
+                                <th scope="col" class="px-4 py-3">Số lượng</th>
                                 <th scope="col" class="px-4 py-3">Actions</th>
                             </tr>
                         </thead>
@@ -190,7 +211,7 @@ const formatCurrency = (value) => {
                                 v-for="product in products.data"
                                 :key="product.id"
                             >
-                                <th class="rounded-sm ml-3 py-2">
+                                <th class="rounded-sm ml-3 py-2 pl-2">
                                     <img
                                         :src="'/storage/' + product.image_url"
                                         alt="avatar"
@@ -207,11 +228,7 @@ const formatCurrency = (value) => {
                                     {{ product.category.category_name }}
                                 </td>
                                 <td class="px-4 py-3">
-                                    {{
-                                        product.in_stock === 1
-                                            ? "Còn món"
-                                            : "Hết món"
-                                    }}
+                                    {{ product.quantity }}
                                 </td>
                                 <td class="px-4 py-3">
                                     <div class="flex items-center">

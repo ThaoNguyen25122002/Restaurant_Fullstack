@@ -189,7 +189,7 @@ const handleSearch = (value) => {
                     form.errors.email
                 }}</span>
             </div>
-            <div class="relative z-0 w-full mb-5 group" v-if="!editMode">
+            <div class="relative z-0 w-full mb-5 group">
                 <input
                     type="password"
                     name="floating_password"
@@ -201,13 +201,15 @@ const handleSearch = (value) => {
                 <label
                     for="floating_password"
                     class="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-8 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-8"
-                    >Mật khẩu <span class="text-red-500">*</span></label
+                >
+                    {{ editMode ? "Mật khẩu mới" : "Mật khẩu" }}
+                    <span class="text-red-500" v-if="!editMode">*</span></label
                 >
                 <span class="text-red-400" v-if="form.errors.password">{{
                     form.errors.password
                 }}</span>
             </div>
-            <div class="relative z-0 w-full mb-5 group" v-if="!editMode">
+            <div class="relative z-0 w-full mb-5 group">
                 <input
                     type="password"
                     name="repeat_password"
@@ -219,8 +221,8 @@ const handleSearch = (value) => {
                 <label
                     for="floating_repeat_password"
                     class="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-8 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-8"
-                    >Nhập lại mật khẩu
-                    <span class="text-red-500">*</span></label
+                    >Nhập lại mật khẩu {{ editMode ? "mới" : "" }}
+                    <span class="text-red-500" v-if="!editMode">*</span></label
                 >
             </div>
             <div class="mb-4">
@@ -319,7 +321,7 @@ const handleSearch = (value) => {
                 :disabled="form.processing"
                 class="disabled:bg-gray-400 disabled:cursor-not-allowed text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 ml-auto block"
             >
-                Submit
+                {{ editMode ? "Cập nhật" : "Tạo" }}
             </button>
         </form>
 
@@ -337,7 +339,7 @@ const handleSearch = (value) => {
     <!-- End Dialog Form Create or Edit User -->
     <!-- <h1 class="text-red-500 z-20">{{ searchQuery }}</h1> -->
     <section class="bg-gray-50">
-        <div class="mx-auto max-w-screen-xl">
+        <div class="mx-auto max-w-screen">
             <!-- Start coding here -->
             <div
                 class="bg-white relative shadow-md sm:rounded-lg overflow-hidden"
@@ -359,184 +361,8 @@ const handleSearch = (value) => {
                             type="button"
                             class="flex items-center justify-center text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2 focus:outline-none"
                         >
-                            <svg
-                                class="h-3.5 w-3.5 mr-2"
-                                fill="currentColor"
-                                viewbox="0 0 20 20"
-                                xmlns="http://www.w3.org/2000/svg"
-                                aria-hidden="true"
-                            >
-                                <path
-                                    clip-rule="evenodd"
-                                    fill-rule="evenodd"
-                                    d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
-                                />
-                            </svg>
-                            Add product
+                            Tạo tài khoản người dùng
                         </button>
-                        <div
-                            class="flex items-center space-x-3 w-full md:w-auto"
-                        >
-                            <button
-                                id="actionsDropdownButton"
-                                data-dropdown-toggle="actionsDropdown"
-                                class="w-full md:w-auto flex items-center justify-center py-2 px-4 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200"
-                                type="button"
-                            >
-                                <svg
-                                    class="-ml-1 mr-1.5 w-5 h-5"
-                                    fill="currentColor"
-                                    viewbox="0 0 20 20"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    aria-hidden="true"
-                                >
-                                    <path
-                                        clip-rule="evenodd"
-                                        fill-rule="evenodd"
-                                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                    />
-                                </svg>
-                                Actions
-                            </button>
-                            <div
-                                id="actionsDropdown"
-                                class="hidden z-10 w-44 bg-white rounded divide-y divide-gray-100 shadow"
-                            >
-                                <ul
-                                    class="py-1 text-sm text-gray-700"
-                                    aria-labelledby="actionsDropdownButton"
-                                >
-                                    <li>
-                                        <a
-                                            href="#"
-                                            class="block py-2 px-4 hover:bg-gray-100"
-                                            >Mass Edit</a
-                                        >
-                                    </li>
-                                </ul>
-                                <div class="py-1">
-                                    <a
-                                        href="#"
-                                        class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100"
-                                        >Delete all</a
-                                    >
-                                </div>
-                            </div>
-                            <button
-                                id="filterDropdownButton"
-                                data-dropdown-toggle="filterDropdown"
-                                class="w-full md:w-auto flex items-center justify-center py-2 px-4 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200"
-                                type="button"
-                            >
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    aria-hidden="true"
-                                    class="h-4 w-4 mr-2 text-gray-400"
-                                    viewbox="0 0 20 20"
-                                    fill="currentColor"
-                                >
-                                    <path
-                                        fill-rule="evenodd"
-                                        d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z"
-                                        clip-rule="evenodd"
-                                    />
-                                </svg>
-                                Filter
-                                <svg
-                                    class="-mr-1 ml-1.5 w-5 h-5"
-                                    fill="currentColor"
-                                    viewbox="0 0 20 20"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    aria-hidden="true"
-                                >
-                                    <path
-                                        clip-rule="evenodd"
-                                        fill-rule="evenodd"
-                                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                    />
-                                </svg>
-                            </button>
-                            <div
-                                id="filterDropdown"
-                                class="z-10 hidden w-48 p-3 bg-white rounded-lg shadow"
-                            >
-                                <h6
-                                    class="mb-3 text-sm font-medium text-gray-900"
-                                >
-                                    Choose brand
-                                </h6>
-                                <ul
-                                    class="space-y-2 text-sm"
-                                    aria-labelledby="filterDropdownButton"
-                                >
-                                    <li class="flex items-center">
-                                        <input
-                                            id="apple"
-                                            type="checkbox"
-                                            value=""
-                                            class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 focus:ring-2"
-                                        />
-                                        <label
-                                            for="apple"
-                                            class="ml-2 text-sm font-medium text-gray-900"
-                                            >Apple (56)</label
-                                        >
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input
-                                            id="fitbit"
-                                            type="checkbox"
-                                            value=""
-                                            class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 focus:ring-2"
-                                        />
-                                        <label
-                                            for="fitbit"
-                                            class="ml-2 text-sm font-medium text-gray-900"
-                                            >Microsoft (16)</label
-                                        >
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input
-                                            id="razor"
-                                            type="checkbox"
-                                            value=""
-                                            class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 focus:ring-2"
-                                        />
-                                        <label
-                                            for="razor"
-                                            class="ml-2 text-sm font-medium text-gray-900"
-                                            >Razor (49)</label
-                                        >
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input
-                                            id="nikon"
-                                            type="checkbox"
-                                            value=""
-                                            class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 focus:ring-2"
-                                        />
-                                        <label
-                                            for="nikon"
-                                            class="ml-2 text-sm font-medium text-gray-900"
-                                            >Nikon (12)</label
-                                        >
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input
-                                            id="benq"
-                                            type="checkbox"
-                                            value=""
-                                            class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 focus:ring-2"
-                                        />
-                                        <label
-                                            for="benq"
-                                            class="ml-2 text-sm font-medium text-gray-900"
-                                            >BenQ (74)</label
-                                        >
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
                     </div>
                 </div>
                 <div class="overflow-x-auto">

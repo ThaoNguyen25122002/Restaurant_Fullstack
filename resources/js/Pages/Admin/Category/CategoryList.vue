@@ -91,7 +91,42 @@ const createCategory = () => {
         },
     });
 };
-
+const deleteCategory = (categoryId) => {
+    Swal.fire({
+        title: "Bạn muốn xóa?",
+        // text: "Bạn không thể khôi phục nếu xóa!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Xóa!",
+    }).then((result) => {
+        if (result.isConfirmed) {
+            router.delete(
+                route("admin.categories.delete", { id: categoryId }),
+                {
+                    onSuccess: (page) => {
+                        Swal.fire({
+                            toast: true,
+                            icon: "success",
+                            position: "top-end",
+                            showConfirmButton: false,
+                            title: page.props.flash.success,
+                            timer: 1500,
+                        });
+                    },
+                    onError: (errors) => {
+                        Swal.fire({
+                            title: "Error!",
+                            text: errors.error,
+                            icon: "error",
+                        });
+                    },
+                }
+            );
+        }
+    });
+};
 const onChange = (event) => {
     const file = event.target.files[0];
 
@@ -237,7 +272,7 @@ const handleSearch = (value) => {
     <!-- End Dialog Form Create or Edit User -->
 
     <section class="bg-gray-50">
-        <div class="mx-auto max-w-screen-xl">
+        <div class="mx-auto max-w-screen">
             <!-- Start coding here -->
             <div
                 class="bg-white relative shadow-md sm:rounded-lg overflow-hidden"
@@ -400,7 +435,9 @@ const handleSearch = (value) => {
                                                 />
                                             </svg>
                                         </button>
-                                        <button @click="deleteUser(user)">
+                                        <button
+                                            @click="deleteCategory(category.id)"
+                                        >
                                             <svg
                                                 class="size-5 text-gray-800"
                                                 aria-hidden="true"

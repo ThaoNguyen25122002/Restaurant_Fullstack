@@ -8,11 +8,18 @@ import ProductList from "../../../Layouts/Customer/Products/ProductList.vue";
 defineOptions({
     layout: CustomerLayout,
 });
+
+defineProps({
+    products: Array,
+    categories: Array,
+});
 </script>
 
 <template>
     <!-- Delivery -->
-    <div class="bg-[#202124] text-white py-4 w-full flex justify-center">
+    <div
+        class="bg-[#202124] text-white py-4 w-full flex justify-center mt-[72px]"
+    >
         <div class="text-center flex justify-between items-center px-4">
             <!-- Navigation Links -->
             <div class="flex space-x-8">
@@ -44,8 +51,8 @@ defineOptions({
     <HeroBanner />
 
     <!-- Dish List -->
-    <DishList />
+    <DishList :categories="categories" />
 
     <!-- Product List -->
-    <ProductList title="Có thể bạn sẽ thích món này" />
+    <ProductList :products="products" title="Có thể bạn sẽ thích món này" />
 </template>

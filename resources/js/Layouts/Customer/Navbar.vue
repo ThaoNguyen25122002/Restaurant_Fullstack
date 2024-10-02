@@ -1,5 +1,6 @@
 <script setup>
-import { ref } from "vue";
+import { router, usePage } from "@inertiajs/vue3";
+import { computed, ref } from "vue";
 
 const open = ref(false);
 const navLinks = [
@@ -20,13 +21,22 @@ const navLinks = [
         name: "Contact",
     },
 ];
-
+const totalQty = computed(() => usePage().props.cartTotalItems);
+console.log(totalQty.value);
+const searchQuery = ref(null);
 const handleClick = () => {
     open.value = !open.value;
 };
 
 const handleClose = () => {
     open.value = false;
+};
+const handleSearch = () => {
+    if (searchQuery.value.trim() === "") {
+        return;
+    }
+    // console.log(searchQuery.value);
+    router.get(route("foods.search"), { searchQuery: searchQuery.value });
 };
 </script>
 
@@ -99,12 +109,34 @@ const handleClose = () => {
             >
                 <Link
                     @click="handleClose"
-                    :href="link.href"
-                    class="hover:bg-red-200 hover:text-slate-100 ease-in-out duration-300 py-3 px-3 rounded-md"
-                    v-for="link in navLinks"
-                    :key="link.name"
+                    :href="route('home')"
+                    class="hover:bg-red-500 hover:text-slate-100 ease-in-out duration-300 py-3 px-3 rounded-md"
+                    :class="
+                        $page.url === '/' ? 'text-red-900 font-semibold' : ''
+                    "
                 >
-                    {{ link.name }}
+                    Trang Chủ
+                </Link>
+                <Link
+                    @click="handleClose"
+                    :href="route('foods.menu')"
+                    class="hover:bg-red-500 hover:text-slate-100 ease-in-out duration-300 py-3 px-3 rounded-md"
+                >
+                    Thực Đơn
+                </Link>
+                <Link
+                    @click="handleClose"
+                    :href="route('home')"
+                    class="hover:bg-red-500 hover:text-slate-100 ease-in-out duration-300 py-3 px-3 rounded-md"
+                >
+                    Giới Thiệu
+                </Link>
+                <Link
+                    @click="handleClose"
+                    :href="route('home')"
+                    class="hover:bg-red-500 hover:text-slate-100 ease-in-out duration-300 py-3 px-3 rounded-md"
+                >
+                    Liên Hệ
                 </Link>
             </ul>
             <div
@@ -130,12 +162,18 @@ const handleClose = () => {
                         />
                     </svg>
                     <input
-                        type="text"
+                        @keydown.enter="handleSearch"
+                        v-model="searchQuery"
+                        type="search"
                         placeholder="Search Foods..."
                         class="flex-1 bg-transparent outline-none text-base text-neutral-800 font-normal placeholder:text-neutral-400/80"
                     />
                 </div>
-                <button class="relative shrink-0">
+                <Link
+                    @click="handleClose"
+                    :href="route('cart')"
+                    class="relative shrink-0"
+                >
                     <svg
                         class="size-7 text-gray-800"
                         aria-hidden="true"
@@ -154,13 +192,24 @@ const handleClose = () => {
                         />
                     </svg>
                     <div
-                        class="absolute -top-2 -right-2.5 bg-red-400 text-white rounded-full text-xs p-2 py-0.5 flex items-center justify-center"
+                        class="absolute -top-2 -right-2.5 bg-red-400 text-white rounded-full text-xs p-1.5 py-0.5 flex items-center justify-center"
                     >
-                        0
+                        {{ totalQty }}
                     </div>
-                </button>
+                </Link>
 
-                <a v-if="false"> Đăng nhập </a>
+                <Link
+                    @click="handleClose"
+                    :href="route('login')"
+                    v-if="!$page.props.auth.user"
+                    :class="
+                        $page.url === '/login'
+                            ? 'text-red-900 font-semibold'
+                            : ''
+                    "
+                >
+                    Đăng nhập
+                </Link>
                 <div v-else class="relative group shrink-0 cursor-pointer">
                     <div class="flex items-center gap-1">
                         <span class="py-2">Cong Thao</span>
@@ -184,12 +233,15 @@ const handleClose = () => {
                     <ul
                         class="absolute hidden group-hover:block -left-12 right-0 shadow-md rounded-sm cursor-pointer z-30 bg-white font-normal"
                     >
-                        <li
+                        <Link
+                            @click="handleClose"
+                            :href="route('profile')"
                             class="inline-block cursor-pointer w-full rounded-md py-2 px-4 hover:bg-slate-100 hover:text-green-600"
                         >
                             Tài Khoản
-                        </li>
+                        </Link>
                         <li
+                            @click="handleClose"
                             class="inline-block cursor-pointer w-full rounded-md py-2 px-4 hover:bg-slate-100 hover:text-green-600"
                         >
                             Đơn Hàng
@@ -197,7 +249,14 @@ const handleClose = () => {
                         <li
                             class="inline-block cursor-pointer w-full rounded-md py-2 px-4 hover:bg-slate-100 hover:text-green-600"
                         >
-                            Đăng Xuất
+                            <Link
+                                @click="handleClose"
+                                :href="route('logout')"
+                                method="post"
+                                as="button"
+                            >
+                                Đăng xuất
+                            </Link>
                         </li>
                     </ul>
                 </div>

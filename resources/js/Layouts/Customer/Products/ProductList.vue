@@ -1,13 +1,19 @@
 <script setup>
 import ProductCard from "./ProductCard.vue";
-defineProps({
+const props = defineProps({
     title: String,
+    products: {
+        type: [Object, Array],
+        required: true,
+    },
 });
+
+console.log(props.products);
 </script>
 
 <template>
-    <div class="container">
-        <div class="flex items-center pt-12 pb-7">
+    <div class="container mb-5" v-if="products.length > 0">
+        <div class="flex items-center pt-8 pb-7" v-if="title">
             <h4
                 class="font-extrabold text-xl sm:text-2xl whitespace-nowrap pr-4 text-[#202124] tracking-wide uppercase"
             >
@@ -21,10 +27,14 @@ defineProps({
         <div
             class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4"
         >
+            <ProductCard
+                v-for="product in products"
+                :key="product.id"
+                :product="product"
+            />
+            <!-- <ProductCard />
             <ProductCard />
-            <ProductCard />
-            <ProductCard />
-            <ProductCard />
+            <ProductCard /> -->
         </div>
     </div>
 </template>

@@ -9,6 +9,7 @@ use App\Http\Resources\ProductResource;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
@@ -41,7 +42,7 @@ class ProductController extends Controller
             ->orWhere('price','like',"%".$request->search."%");
         })->when($category, function ($query) use ($category) {
             $query->where('category_id', $category->id);
-        })->with('category')->paginate(5)->withQueryString();
+        })->orderBy('id','desc')->with('category')->paginate(5)->withQueryString();
         $categories = Category::all();
         // dd(ProductResource::collection($products));
         return Inertia('Admin/Product/Index',[
@@ -108,6 +109,12 @@ class ProductController extends Controller
         }
         $product->delete();
         return back()->with('success','Xóa thành công.');
+    }
+
+    public function setQuantity(){
+        Product::query()->update(['quantity' => DB::raw('set_quantity')]);
+        // dd(123);
+        return back()->with('success', 'Số lượng các món đã được reset!');
     }
     
 }

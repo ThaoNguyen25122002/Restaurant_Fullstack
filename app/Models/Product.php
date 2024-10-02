@@ -14,8 +14,10 @@ class Product extends Model
         'description',
         'price',    
         'image_url',    
-        'in_stock',
-        'slug'    
+        'slug' ,   
+        'quantity',
+        'sold_quantity',  
+        'set_quantity'    
     ];
 
 

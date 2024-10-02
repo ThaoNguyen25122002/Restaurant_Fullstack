@@ -2,7 +2,9 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\CartItem;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -46,6 +48,14 @@ class HandleInertiaRequests extends Middleware
                 'warning' => fn () => $request->session()->get('warning'),
                 'info' => fn () => $request->session()->get('info')
             ],
+            
+            'cartTotalItems' => function () {
+                // Tổng số lượng sản phẩm trong giỏ hàng
+                if (Auth::check()) {
+                    return CartItem::where('user_id', Auth::id())->sum('quantity');
+                }
+                return 0;
+            }
         ]);
     }
 }

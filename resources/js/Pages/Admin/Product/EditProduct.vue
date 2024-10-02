@@ -22,7 +22,9 @@ const form = useForm({
     category_id: props.product.category_id,
     description: props.product.description,
     price: props.product.price,
-    in_stock: props.product.in_stock,
+    quantity: props.product.quantity,
+    set_quantity: props.product.set_quantity,
+    // in_stock: props.product.in_stock,
     image_url: props.product.image_url,
     newImage: null,
 });
@@ -108,6 +110,43 @@ const submitForm = () => {
                 }}</small>
             </div>
         </div>
+        <!-- Quantity and set Quantity -->
+        <div class="flex items-start space-x-3">
+            <div class="w-1/2">
+                <label
+                    class="block text-gray-700 font-semibold mb-1"
+                    for="quantity"
+                    >Số Lượng</label
+                >
+                <input
+                    id="quantity"
+                    type="number"
+                    class="w-full px-3 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    v-model="form.quantity"
+                    placeholder="Nhập số lượng"
+                />
+                <small class="text-red-400">{{ form.errors.quantity }}</small>
+            </div>
+
+            <!-- Set Quantity -->
+            <div class="w-1/2">
+                <label
+                    class="block text-gray-700 font-semibold mb-1"
+                    for="setQuantity"
+                    >Số Lượng Mặc Định</label
+                >
+                <input
+                    id="setQuantity"
+                    type="number"
+                    class="w-full px-3 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    v-model="form.set_quantity"
+                    placeholder="Nhập số lượng mặc định khi được reset"
+                />
+                <small class="text-red-400">{{
+                    form.errors.set_quantity
+                }}</small>
+            </div>
+        </div>
 
         <!-- Description -->
         <div>
@@ -129,7 +168,7 @@ const submitForm = () => {
         <!-- Price and Quantity -->
         <div class="flex items-start space-x-3">
             <!-- Price -->
-            <div class="w-1/2">
+            <div class="w-full">
                 <label
                     class="block text-gray-700 font-semibold mb-1"
                     for="price"
@@ -143,24 +182,6 @@ const submitForm = () => {
                     placeholder="Nhập giá sản phẩm"
                 />
                 <small class="text-red-400">{{ form.errors.price }}</small>
-            </div>
-
-            <!-- Quantity -->
-            <div class="w-1/2">
-                <label
-                    class="block text-gray-700 font-semibold mb-1"
-                    for="category"
-                    >Trạng Thái</label
-                >
-                <select
-                    v-model="form.in_stock"
-                    id="category"
-                    class="w-full px-3 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                >
-                    <option value="1">Còn món</option>
-                    <option value="0">Hết món</option>
-                </select>
-                <!-- <small class="text-red-400">{{ form.errors.stock }}</small> -->
             </div>
         </div>
 

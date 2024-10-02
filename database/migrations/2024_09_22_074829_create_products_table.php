@@ -19,7 +19,9 @@ return new class extends Migration
             $table->decimal('price', 10, 2);
             $table->string('image_url')->nullable();
             $table->string('slug')->unique();
-            $table->boolean('in_stock')->default(true);
+            $table->integer('set_quantity')->default(0); 
+            $table->integer('quantity')->default(0); 
+            $table->integer('sold_quantity')->default(0);
             // $table->integer('stock')->default(0);
             $table->timestamps();
         });

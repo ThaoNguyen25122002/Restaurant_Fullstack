@@ -53,4 +53,14 @@ class CategoryController extends Controller
         return to_route('admin.categories')->with('success','Cập nhật thành công.');
         
     }
+
+    public function delete(Category $category){
+        $qty = $category->products()->count();
+        // dd($qty);
+        if($qty > 0){
+            return back()->withErrors(['error' => 'Không thể xóa danh mục do vẫn còn sản phẩm liên quan.']);
+        }
+        $category->delete();
+        return back()->with('success','Đã xóa danh mục.');
+    }
 }

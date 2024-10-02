@@ -19,6 +19,8 @@ const form = useForm({
     price: null,
     in_stock: 1,
     image_url: null,
+    quantity: null,
+    set_quantity: null,
 });
 const imagePreview = ref(null);
 const previewImage = (event) => {
@@ -102,6 +104,43 @@ const submitForm = () => {
                 }}</small>
             </div>
         </div>
+        <!-- Quantity and set Quantity -->
+        <div class="flex items-start space-x-3">
+            <div class="w-1/2">
+                <label
+                    class="block text-gray-700 font-semibold mb-1"
+                    for="quantity"
+                    >Số Lượng</label
+                >
+                <input
+                    id="quantity"
+                    type="number"
+                    class="w-full px-3 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    v-model="form.quantity"
+                    placeholder="Nhập số lượng"
+                />
+                <small class="text-red-400">{{ form.errors.quantity }}</small>
+            </div>
+
+            <!-- Set Quantity -->
+            <div class="w-1/2">
+                <label
+                    class="block text-gray-700 font-semibold mb-1"
+                    for="setQuantity"
+                    >Số Lượng Mặc Định Khi Được Reset</label
+                >
+                <input
+                    id="setQuantity"
+                    type="number"
+                    class="w-full px-3 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    v-model="form.set_quantity"
+                    placeholder="Nhập số lượng mặc định khi được set"
+                />
+                <small class="text-red-400">{{
+                    form.errors.set_quantity
+                }}</small>
+            </div>
+        </div>
 
         <!-- Description -->
         <div>
@@ -137,23 +176,6 @@ const submitForm = () => {
                     placeholder="Nhập giá sản phẩm"
                 />
                 <small class="text-red-400">{{ form.errors.price }}</small>
-            </div>
-
-            <!-- Quantity -->
-            <div class="w-1/2">
-                <label
-                    class="block text-gray-700 font-semibold mb-1"
-                    for="category"
-                    >Trạng Thái</label
-                >
-                <select
-                    v-model="form.in_stock"
-                    id="category"
-                    class="w-full px-3 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                >
-                    <option value="1">Còn món</option>
-                    <option value="0">Hết món</option>
-                </select>
             </div>
         </div>
 

@@ -27,8 +27,11 @@ class ProductUpdateRequest extends FormRequest
             'category_id' => ['required', 'exists:categories,id'],
             'description' => ['required', 'max:250'],
             'price' => ['required', 'numeric'],
-            'in_stock' => ['required'],
-            'newImage' => ['nullable', 'image', 'mimes:jpg,png,gif,svg,webp', 'max:2048']
+            // 'in_stock' => ['required'],
+            'newImage' => ['nullable', 'image', 'mimes:jpg,png,gif,svg,webp', 'max:2048'],
+            'quantity' => ['required', 'integer','min:1'],
+            'set_quantity' => ['required', 'integer','min:1'],
+
         ];
     }
 
@@ -48,6 +51,12 @@ class ProductUpdateRequest extends FormRequest
             'newImage.image' => 'Tệp phải là hình ảnh.',
             'newImage.mimes' => 'Hình ảnh phải có định dạng: jpg, png, gif, svg, webp.',
             'newImage.max' => 'Hình ảnh không được vượt quá 2048KB.',
+            'quantity.required' => 'Số lượng là bắt buộc.',
+            'quantity.integer' => 'Số lượng phải là một số nguyên.',
+            'quantity.min' => 'Nhập ít nhất :min số.',
+            'set_quantity.required' => 'Số lượng được mặt định được set là bắt buộc.',
+            'set_quantity.integer' => 'Số lượng được mặt định được set phải là một số nguyên.',
+            'set_quantity.min' => 'Nhập ít nhật :min số.',
         ];
     }
 }

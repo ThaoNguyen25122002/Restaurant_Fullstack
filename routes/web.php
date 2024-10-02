@@ -5,14 +5,64 @@ use App\Http\Controllers\Admin\AuthAdminController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Customer\AuthCustomerController;
 use App\Http\Controllers\Customer\HomeController;
+use App\Http\Controllers\Customer\CartController;
+use App\Http\Controllers\Customer\CheckoutController;
+use App\Http\Controllers\Customer\CustomerProfileController;
+use App\Http\Controllers\Customer\FoodController;
+use App\Http\Controllers\Customer\MenuController;
+use App\Http\Controllers\Customer\SearchQueryController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 // Route::get('/', function () {
 //     return Inertia::render('Admin/Dashboard/Index');
 // });
+// ================================== Customer ==================================== //
+// ================== Home ================ //
 Route::get('/',[HomeController::class,'index'])->name('home');
+// ================== Handle Cart ================ //
+Route::post('/cart/{product}/store',[CartController::class,'store'])->name('cart.store');
+Route::get('/cart',[CartController::class,'index'])->name('cart');
+Route::patch('/cart/{cartItem}/update',[CartController::class,'update'])->name('cart.update');
+Route::delete('/cart/{cartItem}/delete',[CartController::class,'delete'])->name('cart.delete');
+// ================== Food Detail ================ //    
+Route::get('food/{product:slug}',[FoodController::class,'show'])->name('food.detail');
+Route::get('categories/{category:slug}',[FoodController::class,'getFoodByCategory'])->name('foods.category');
+// Route::get('foods/menu',[FoodController::class,'test'])->name('foods.menu');
+Route::get('menu/foods',[MenuController::class,'index'])->name('foods.menu');
+// ================== Search Foods ================ //    
+Route::get('foods',[SearchQueryController::class,'index'])->name('foods.search');
+
+
+// ================================== Customer ==================================== //
+Route::middleware('guest')->group(function(){
+    Route::inertia('/login','Customer/Auth/Login')->name('login');
+    Route::post('/login',[AuthCustomerController::class,'login'])->name('handle.login');
+    Route::inertia('/register','Customer/Auth/Register')->name('register');
+    Route::post('/register',[AuthCustomerController::class,'register'])->name('handle.register');
+    Route::inertia('/reset-link','Customer/Auth/SendResetLinkEmail')->name('sendResetLinkEmail');
+    Route::post('/reset-link',[AuthCustomerController::class,'sendResetLinkEmail'])->name('handle.sendResetLinkEmail');
+    Route::inertia('/reset-password','Customer/Auth/ResetPassword')->name('resetPassword');
+    Route::post('/reset-password',[AuthCustomerController::class,'resetPassword'])->name('handle.resetPassword');
+
+});
+Route::middleware('auth')->group(function(){
+    Route::post('/logout',[AuthCustomerController::class,'logout'])->name('logout');
+    // ================== Handle Checkout ================ //
+    Route::get('/checkout',[CheckoutController::class,'index'])->name('checkout');
+    Route::post('/payment/cod',[CheckoutController::class,'paymentCod'])->name('payment.cod');
+    Route::post('/payment/vnpay',[CheckoutController::class,'payment_vnpay'])->name('payment.vnpay');
+    Route::get('/payment/vnpay/return', [CheckoutController::class, 'vnpayReturn'])->name('vnpay.return');
+    // ================== Profile ================ //
+    Route::inertia('/profile','Customer/Profile/Index')->name('profile');
+    Route::put('profile/{user}/update',[CustomerProfileController::class,'update'])->name('profile.update');
+
+    
+});
+
+// ================================== Admin ==================================== //
 Route::prefix('admin')->group(function(){
     Route::middleware('guest')->group(function(){
         Route::inertia('/login','Admin/LoginAdmin/Index')->name('admin.login');
@@ -38,10 +88,12 @@ Route::prefix('admin')->group(function(){
         Route::get('products/{product}/edit',[ProductController::class,'edit'])->name('admin.products.edit'); 
         Route::put('products/{product}/update',[ProductController::class,'update'])->name('admin.products.update'); 
         Route::delete('products/{product}/delete',[ProductController::class,'delete'])->name('admin.products.delete');
+        Route::post('products/set-quantity',[ProductController::class,'setQuantity'])->name('admin.products.setQuantity');
         // Route::get('products',[ProductController::class,'index'])->name('admin.products.filterCategoryProducts');g
         // ================== Categories ==================// 
         Route::get('categories',[CategoryController::class,'index'])->name('admin.categories');
         Route::post('categories/create',[CategoryController::class,'store'])->name('admin.categories.create');
         Route::post('categories/{category}/update',[CategoryController::class,'update'])->name('admin.categories.update');
+        Route::delete('categories/{category}/delete',[CategoryController::class,'delete'])->name('admin.categories.delete');
     });
 });

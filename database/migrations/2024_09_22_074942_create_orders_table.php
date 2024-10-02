@@ -13,12 +13,14 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->foreignId('delivery_staff_id')->nullable()->constrained('users')->onDelete('set null');
+            $table->string('order_code')->unique();
+            $table->foreignId('customer_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('staff_id')->nullable()->constrained('users')->onDelete('set null'); 
             $table->decimal('total_amount', 10, 2);
-            $table->enum('payment_method',['VNPay','Cash on Delivery'])->default('Cash on Delivery');
-            $table->enum('status', ['Chờ duyệt', 'Đang xử lý', 'Đang giao hàng', 'Đã giao hàng', 'Đã hủy'])->default('Chờ duyệt');
-            $table->text('delivery_address');
+            $table->enum('payment_method',['vnpay','cod'])->default('cod');
+            $table->enum('status', ['Chờ duyệt', 'Đã nhận đơn', 'Đang giao hàng', 'Đã giao hàng', 'Đã hủy'])->default('Chờ duyệt');
+            $table->string('delivery_address');
+            $table->string('note')->nullable();
             $table->timestamps();
         });
     }

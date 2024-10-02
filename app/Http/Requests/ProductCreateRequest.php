@@ -26,8 +26,10 @@ class ProductCreateRequest extends FormRequest
             'category_id' => ['required', 'exists:categories,id'],
             'description' => ['required', 'max:250'],
             'price' => ['required', 'numeric'],
-            'in_stock' => ['required'],
-            'image_url' => ['image', 'mimes:jpg,png,gif,svg,webp', 'max:2048']
+            // 'in_stock' => ['required'],
+            'image_url' => ['image', 'mimes:jpg,png,gif,svg,webp', 'max:2048'],
+            'quantity' => ['required', 'integer','min:1'],
+            'set_quantity' => ['required', 'integer','min:1'],
         ];
     }
     public function messages()
@@ -45,7 +47,13 @@ class ProductCreateRequest extends FormRequest
             'in_stock.required' => 'Trạng thái là bắt buộc.',
             'image_url.image' => 'Tệp phải là một hình ảnh.',
             'image_url.mimes' => 'Hình ảnh phải có định dạng: jpg, png, gif, svg, webp.',
-            'image_url.max' => 'Hình ảnh không được vượt quá 2048 KB.'
+            'image_url.max' => 'Hình ảnh không được vượt quá 2048 KB.',
+            'quantity.required' => 'Số lượng là bắt buộc.',
+            'quantity.integer' => 'Số lượng phải là một số nguyên.',
+            'quantity.min' => 'Nhập ít nhất :min số.',
+            'set_quantity.required' => 'Số lượng được mặt định được set là bắt buộc.',
+            'set_quantity.integer' => 'Số lượng được mặt định được set phải là một số nguyên.',
+            'set_quantity.min' => 'Nhập ít nhật :min số.',
         ];
     }
 }

@@ -17,19 +17,19 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
         
-        // Role::create([
-        //     'name' => 'staff'
-        // ]);
+        Role::create([
+            'name' => 'customer'
+        ]);
         // User::factory()->create([
         //     'name' => 'Test User',
         //     'email' => 'test@example.com',
         //     'role_id' => '1'
         // ]);
-        Category::create([
-            'category_name'=> 'Gà Rán - Gà Quay',
-            'category_image' => '123',
-            'slug' => 'ga-ran-ga-quay',
-            'is_show' => true,
-        ]);
+        // Category::create([
+        //     'category_name'=> 'Gà Rán - Gà Quay',
+        //     'category_image' => '123',
+        //     'slug' => 'ga-ran-ga-quay',
+        //     'is_show' => true,
+        // ]);
     }
 }
