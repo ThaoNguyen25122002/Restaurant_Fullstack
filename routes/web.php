@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminOrderController;
 use App\Http\Controllers\Admin\AdminProfileController;
 use App\Http\Controllers\Admin\AuthAdminController;
 use App\Http\Controllers\Admin\CategoryController;
@@ -13,6 +14,8 @@ use App\Http\Controllers\Customer\CustomerProfileController;
 use App\Http\Controllers\Customer\FoodController;
 use App\Http\Controllers\Customer\MenuController;
 use App\Http\Controllers\Customer\SearchQueryController;
+use App\Http\Controllers\Staff\AuthStaffController;
+use App\Http\Controllers\Staff\StaffOrderController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -95,5 +98,26 @@ Route::prefix('admin')->group(function(){
         Route::post('categories/create',[CategoryController::class,'store'])->name('admin.categories.create');
         Route::post('categories/{category}/update',[CategoryController::class,'update'])->name('admin.categories.update');
         Route::delete('categories/{category}/delete',[CategoryController::class,'delete'])->name('admin.categories.delete');
+        // ================== Orders ==================// 
+        Route::get('orders',[AdminOrderController::class,'index'])->name('admin.orders');
+        Route::get('orders/{order}/detail',[AdminOrderController::class,'show'])->name('admin.orders.detail');
+    });
+});
+
+
+
+// ================================== Staff Delivery ==================================== //
+Route::prefix('staff')->group(function(){
+    Route::middleware('guest')->group(function(){
+        Route::inertia('/login','Staff/LoginStaff/Index')->name('staff.login');
+        Route::post('login',[AuthStaffController::class,'login'])->name('staff.login');
+    });
+    
+    Route::middleware('isStaff')->group(function(){
+        
+        Route::get('orders',[StaffOrderController::class,'index'])->name('staff.orders');
+        Route::post('staff/logout',[AuthStaffController::class,'logout'])->name('staff.logout');
+        Route::put('staff/{user}/update',[StaffOrderController::class,'updateProfile'])->name('staff.profile.update');
+        // Route::get('orders/detail',[AdminOrderController::class,'show'])->name('admin.orders.detail');
     });
 });

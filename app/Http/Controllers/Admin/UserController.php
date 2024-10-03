@@ -20,13 +20,16 @@ class UserController extends Controller
         $users = User::when($request->search,function($query) use($request){
             $query->where('name','like','%'.$request->search.'%')->orWhere('email','like','%'.$request->search.'%')
             ->orWhere('phone','like','%'.$request->search.'%');
-        })->with('role')->orderBy('id', 'desc')->paginate(5)->withQueryString();
+        })->when($request->role,function($query) use($request){
+            $query->where('role_id','like','%'.$request->role.'%');
+        })->with('role')->orderBy('id', 'desc')->paginate(10)->withQueryString();
         // dd($users);
         // return Inertia::render('Admin/User/Index');
         return inertia('Admin/User/Index',[
             'roles' => $roles,
             'users' => $users,
-            'searchTerm'=>$request->search
+            'searchTerm'=>$request->search,
+            'roleTerm'=>$request->role
         ]);
     }
 

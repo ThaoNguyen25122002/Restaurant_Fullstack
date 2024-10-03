@@ -3,10 +3,12 @@ import { router, useForm } from "@inertiajs/vue3";
 import { ref } from "vue";
 import Swal from "sweetalert2";
 import FormSearch from "@/components/Admin/FormSearch/Index.vue";
+import { watch } from "vue";
 const props = defineProps({
     users: Object,
     roles: Array,
     searchTerm: String,
+    roleTerm: String,
     // openEditModal: Function,
     // form: Object,
 });
@@ -17,8 +19,9 @@ const form = useForm({
     password_confirmation: "",
     phone: "",
     address: "",
-    role_id: 3,
+    role_id: 2,
 });
+const selectedRole = ref(props.roleTerm || "");
 const searchQuery = ref(props.searchTerm || "");
 const isAddProducts = ref(false);
 const dialogVisible = ref(false);
@@ -50,25 +53,19 @@ const handleCreateUser = () => {
     });
     // console.log(form);
 };
-const testClick = () => {
-    Swal.fire({
-        title: "Are you sure?",
-        text: "You won't be able to revert this!",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Yes, delete it!",
-    }).then((result) => {
-        if (result.isConfirmed) {
-            Swal.fire({
-                title: "Deleted!",
-                text: "Your file has been deleted.",
-                icon: "success",
-            });
+watch(selectedRole, (newValue) => {
+    // console.log(newValue);
+    router.get(
+        route("admin.users"),
+        {
+            role: newValue,
+        },
+        {
+            preserveState: true,
+            replace: true,
         }
-    });
-};
+    );
+});
 
 const handleEditUser = (user) => {
     form.id = user.id;
@@ -353,6 +350,7 @@ const handleSearch = (value) => {
                         @onSearch="handleSearch"
                     />
                     <!-- End Search -->
+
                     <div
                         class="w-full md:w-auto flex flex-col md:flex-row space-y-2 md:space-y-0 items-stretch md:items-center justify-end md:space-x-3 flex-shrink-0"
                     >
@@ -363,6 +361,31 @@ const handleSearch = (value) => {
                         >
                             Tạo tài khoản người dùng
                         </button>
+                        <div
+                            class="flex items-center space-x-3 w-full md:w-auto"
+                        >
+                            <div class="w-full max-w-xs mx-auto">
+                                <div class="relative mt-1">
+                                    <select
+                                        id="category"
+                                        name="category"
+                                        v-model="selectedRole"
+                                        class="block w-full pl-3 pr-10 py-2 text-base border border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
+                                    >
+                                        <option selected value="">
+                                            Tất cả quyền
+                                        </option>
+                                        <option
+                                            v-for="role in roles"
+                                            :key="role.id"
+                                            :value="role.id"
+                                        >
+                                            {{ role.name }}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="overflow-x-auto">
