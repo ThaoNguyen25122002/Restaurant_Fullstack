@@ -10,6 +10,7 @@ use App\Http\Controllers\Customer\AuthCustomerController;
 use App\Http\Controllers\Customer\HomeController;
 use App\Http\Controllers\Customer\CartController;
 use App\Http\Controllers\Customer\CheckoutController;
+use App\Http\Controllers\Customer\CustomerOrderController;
 use App\Http\Controllers\Customer\CustomerProfileController;
 use App\Http\Controllers\Customer\FoodController;
 use App\Http\Controllers\Customer\MenuController;
@@ -61,7 +62,9 @@ Route::middleware('auth')->group(function(){
     // ================== Profile ================ //
     Route::inertia('/profile','Customer/Profile/Index')->name('profile');
     Route::put('profile/{user}/update',[CustomerProfileController::class,'update'])->name('profile.update');
-
+    // ================== Orders ================ //
+    Route::get('/orders',[CustomerOrderController::class,'index'])->name('orders');
+    Route::delete('/orders/{order}/delete',[CustomerOrderController::class,'delete'])->name('orders.delete');
     
 });
 
@@ -101,6 +104,7 @@ Route::prefix('admin')->group(function(){
         // ================== Orders ==================// 
         Route::get('orders',[AdminOrderController::class,'index'])->name('admin.orders');
         Route::get('orders/{order}/detail',[AdminOrderController::class,'show'])->name('admin.orders.detail');
+        Route::put('orders/{order}/detail',[AdminOrderController::class,'update'])->name('admin.orders.detail.update');
     });
 });
 
@@ -118,6 +122,7 @@ Route::prefix('staff')->group(function(){
         Route::get('orders',[StaffOrderController::class,'index'])->name('staff.orders');
         Route::post('staff/logout',[AuthStaffController::class,'logout'])->name('staff.logout');
         Route::put('staff/{user}/update',[StaffOrderController::class,'updateProfile'])->name('staff.profile.update');
+        Route::patch('staff/{order}/update',[StaffOrderController::class,'updateStatus'])->name('staff.order.updateStatus');
         // Route::get('orders/detail',[AdminOrderController::class,'show'])->name('admin.orders.detail');
     });
 });

@@ -244,7 +244,7 @@ const handleSearch = () => {
                             @click="handleClose"
                             class="inline-block cursor-pointer w-full rounded-md py-2 px-4 hover:bg-slate-100 hover:text-green-600"
                         >
-                            Đơn Hàng
+                            <Link :href="route('orders')">Đơn hàng</Link>
                         </li>
                         <li
                             class="inline-block cursor-pointer w-full rounded-md py-2 px-4 hover:bg-slate-100 hover:text-green-600"

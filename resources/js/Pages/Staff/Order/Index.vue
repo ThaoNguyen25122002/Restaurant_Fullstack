@@ -1,15 +1,38 @@
 <script setup>
-import { useForm, usePage } from "@inertiajs/vue3";
+import { router, useForm, usePage } from "@inertiajs/vue3";
 import Swal from "sweetalert2";
+import { ref } from "vue";
 
 const page = usePage();
-
+const props = defineProps({
+    orders: Array,
+});
 const form = useForm({
     name: page.props.auth.user.name,
     email: page.props.auth.user.email,
     phone: page.props.auth.user.phone,
 });
+// const status = ref(props.orders.status);
+// console.log(status.value);
+const updateOrderStatus = (orderId, status) => {
+    router.patch(
+        route("staff.order.updateStatus", { id: orderId }),
+        { status },
+        {
+            onSuccess: (page) => {
+                console.log(page);
 
+                Swal.fire({
+                    title: "Hoàn thành!",
+                    text: page.props.flash.success,
+                    icon: "success",
+                });
+            },
+            preserveState: true,
+            // only: ["orders"],
+        }
+    );
+};
 const updateProfile = () => {
     form.put(route("staff.profile.update", { id: page.props.auth.user.id }), {
         onSuccess: (page) => {
@@ -20,6 +43,12 @@ const updateProfile = () => {
             });
         },
     });
+};
+const formatCurrency = (value) => {
+    return new Intl.NumberFormat("vi-VN", {
+        style: "currency",
+        currency: "VND",
+    }).format(value);
 };
 </script>
 
@@ -85,9 +114,14 @@ const updateProfile = () => {
             <!-- Đơn hàng được chỉ định -->
             <div class="bg-white shadow-lg rounded-lg p-6">
                 <h2 class="text-xl font-semibold mb-4">
-                    Đơn hàng được chỉ định để giao
+                    {{
+                        orders.length > 0
+                            ? "Đơn hàng được chỉ định để giao"
+                            : "Không có đơn cần giao"
+                    }}
                 </h2>
-                <table class="w-full table-auto">
+
+                <table class="w-full table-auto" v-if="orders.length > 0">
                     <thead>
                         <tr class="bg-gray-200 text-gray-600 uppercase text-sm">
                             <th class="p-2 text-left">Mã đơn hàng</th>
@@ -102,37 +136,47 @@ const updateProfile = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr class="border-b">
-                            <td class="p-2">#123456</td>
-                            <td class="p-2">Nguyễn Văn A</td>
-                            <td class="p-2">0123 456 789</td>
-                            <td class="p-2">123 Đường ABC, TP.HCM</td>
-                            <td class="p-2">318.000 VND</td>
+                        <tr
+                            v-for="order in orders"
+                            :key="order.id"
+                            class="border-b"
+                        >
+                            <td class="p-2">{{ order.order_code }}</td>
+                            <td class="p-2">{{ order.customer.name }}</td>
+                            <td class="p-2">{{ order.customer.phone }}</td>
+                            <td class="p-2">{{ order.delivery_address }}</td>
                             <td class="p-2">
-                                Thanh toán VNPay (Đã thanh toán)
+                                {{ formatCurrency(order.total_amount) }}
                             </td>
                             <td class="p-2">
-                                <select class="w-full bg-gray-100 p-2 rounded">
-                                    <option>Đã nhận đơn</option>
-                                    <option>Đang giao hàng</option>
-                                    <option>Đã giao hàng</option>
-                                    <option>Đã hủy</option>
-                                </select>
+                                {{
+                                    order.payment_method === "cod"
+                                        ? "Thanh toán khi nhận hàng"
+                                        : "Thanh toán VNPay (Đã thanh toán)"
+                                }}
                             </td>
-                        </tr>
-                        <tr class="border-b">
-                            <td class="p-2">#123456</td>
-                            <td class="p-2">Nguyễn Văn A</td>
-                            <td class="p-2">0123 456 789</td>
-                            <td class="p-2">123 Đường ABC, TP.HCM</td>
-                            <td class="p-2">318.000 VND</td>
-                            <td class="p-2">Thanh toán khi nhận hàng</td>
                             <td class="p-2">
-                                <select class="w-full bg-gray-100 p-2 rounded">
-                                    <option>Đã nhận đơn</option>
-                                    <option>Đang giao hàng</option>
-                                    <option>Đã giao hàng</option>
-                                    <option>Đã hủy</option>
+                                <select
+                                    v-model="order.status"
+                                    @change="
+                                        updateOrderStatus(
+                                            order.id,
+                                            order.status
+                                        )
+                                    "
+                                    class="w-full bg-gray-100 p-2 rounded"
+                                >
+                                    <!-- <option value="Chờ duyệt">Chờ duyệt</option> -->
+                                    <option value="Đã nhận đơn">
+                                        Đã nhận đơn
+                                    </option>
+                                    <option value="Đang giao hàng">
+                                        Đang giao hàng
+                                    </option>
+                                    <option value="Đã giao hàng">
+                                        Đã giao hàng
+                                    </option>
+                                    <option value="Đã hủy">Đã hủy</option>
                                 </select>
                             </td>
                         </tr>

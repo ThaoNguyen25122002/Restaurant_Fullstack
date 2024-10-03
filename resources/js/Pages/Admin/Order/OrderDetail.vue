@@ -1,7 +1,7 @@
 <script setup>
 import AdminLayout from "@/Layouts/Admin/AdminLayout.vue";
 import { useForm } from "@inertiajs/vue3";
-import { ref } from "vue";
+import Swal from "sweetalert2";
 defineOptions({
     layout: AdminLayout,
 });
@@ -35,7 +35,22 @@ const formatCurrency = (value) => {
 };
 
 const updateOrderDetail = () => {
-    // form.put()
+    // console.log(form.staff_id);
+    // console.log(form);
+
+    form.put(route("admin.orders.detail.update", { id: props.orders.id }), {
+        onSuccess: (page) => {
+            // console.log(123);
+            Swal.fire({
+                toast: true,
+                icon: "success",
+                position: "top-end",
+                showConfirmButton: false,
+                title: page.props.flash.success,
+                timer: 1500,
+            });
+        },
+    });
 };
 </script>
 
@@ -84,21 +99,21 @@ const updateOrderDetail = () => {
                         class="w-full bg-gray-100 p-2 rounded"
                     >
                         <option value="Chờ duyệt">Chờ duyệt</option>
-                        <option value="Đang xử lý">Đã nhận đơn</option>
+                        <option value="Đã nhận đơn">Đã nhận đơn</option>
                         <option value="Đang giao hàng">Đang giao hàng</option>
                         <option value="Đã giao hàng">Đã giao hàng</option>
                         <option value="Đã hủy">Đã hủy</option>
                     </select>
+                    <small class="text-red-500">{{ form.errors.status }}</small>
                 </div>
                 <div>
                     <label class="text-gray-600">Nhân viên giao hàng</label>
                     <select
                         v-model="form.staff_id"
-                        class="w-full bg-gray-100 p-2 rounded"
+                        :disabled="form.status === 'Chờ duyệt'"
+                        class="w-full bg-gray-100 p-2 rounded disabled:opacity-30"
                     >
-                        <option value="">
-                            Chọn nhân viên giao hàng {{ form.staff_id }}
-                        </option>
+                        <option value="">Chọn nhân viên giao hàng</option>
                         <option
                             v-for="staff in staffs"
                             :key="staff.id"
@@ -107,6 +122,9 @@ const updateOrderDetail = () => {
                             {{ staff.name }}
                         </option>
                     </select>
+                    <small class="text-red-500">{{
+                        form.errors.staff_id
+                    }}</small>
                 </div>
                 <div>
                     <label class="text-gray-600">Phương thức thanh toán</label>
@@ -129,11 +147,11 @@ const updateOrderDetail = () => {
 
         <!-- Thông tin chi tiết sản phẩm -->
         <div class="mb-6">
-            <h3 class="text-lg font-semibold mb-2">Thông tin sản phẩm</h3>
+            <h3 class="text-lg font-semibold mb-2">Thông tin đơn hàng</h3>
             <table class="w-full table-auto">
                 <thead>
                     <tr class="bg-gray-200 text-gray-600 uppercase text-sm">
-                        <th class="p-2 text-left">Sản phẩm</th>
+                        <th class="p-2 text-left">Tên món</th>
                         <th class="p-2 text-left">Số lượng</th>
                         <th class="p-2 text-left">Giá</th>
                         <th class="p-2 text-left">Tổng</th>
@@ -169,7 +187,7 @@ const updateOrderDetail = () => {
         <div class="flex justify-end">
             <button
                 type="submit"
-                class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded"
+                class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded"
             >
                 Cập nhật đơn
             </button>

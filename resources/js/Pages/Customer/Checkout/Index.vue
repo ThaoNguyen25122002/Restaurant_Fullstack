@@ -28,42 +28,53 @@ const form = useForm({
 const handleCheckout = () => {
     // console.log(paymentMethod.value);
     // console.log(form);
-
-    if (form.payment_method === "cod") {
-        console.log("thanh toan khi nhan hang");
-        form.post(route("payment.cod"), {
-            onSuccess: (page) => {
-                Swal.fire({
-                    toast: true,
-                    icon: "success",
-                    position: "top-end",
-                    showConfirmButton: false,
-                    text: page.props.flash.success,
-                    timer: 2000,
+    Swal.fire({
+        title: "Chắc chắn?",
+        text: "Kiểm tra đúng thông tin trước khi đặt!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Sure!",
+    }).then((result) => {
+        if (result.isConfirmed) {
+            if (form.payment_method === "cod") {
+                console.log("thanh toan khi nhan hang");
+                form.post(route("payment.cod"), {
+                    onSuccess: (page) => {
+                        Swal.fire({
+                            toast: true,
+                            icon: "success",
+                            position: "top-end",
+                            showConfirmButton: false,
+                            text: page.props.flash.success,
+                            timer: 2000,
+                        });
+                    },
                 });
-            },
-        });
-    } else if (form.payment_method === "vnpay") {
-        console.log("thanh toan VNPay");
-        form.post(route("payment.vnpay"), {
-            onSuccess: (page) => {
-                // console.log(page.props);
-                if (page.props.flash.success) {
-                    window.location.href = page.props.flash.success;
-                }
-            },
-            onError: (page) => {
-                Swal.fire({
-                    toast: true,
-                    icon: "error",
-                    position: "top-end",
-                    showConfirmButton: false,
-                    text: page.props.flash.error,
-                    timer: 2000,
+            } else if (form.payment_method === "vnpay") {
+                console.log("thanh toan VNPay");
+                form.post(route("payment.vnpay"), {
+                    onSuccess: (page) => {
+                        // console.log(page.props);
+                        if (page.props.flash.success) {
+                            window.location.href = page.props.flash.success;
+                        }
+                    },
+                    onError: (page) => {
+                        Swal.fire({
+                            toast: true,
+                            icon: "error",
+                            position: "top-end",
+                            showConfirmButton: false,
+                            text: page.props.flash.error,
+                            timer: 2000,
+                        });
+                    },
                 });
-            },
-        });
-    }
+            }
+        }
+    });
 };
 const formatCurrency = (value) => {
     return new Intl.NumberFormat("vi-VN", {

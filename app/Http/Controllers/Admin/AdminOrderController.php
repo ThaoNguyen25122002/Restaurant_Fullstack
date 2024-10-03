@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Order\AdminUpdateOrderRequest;
 use App\Models\Order;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -55,5 +56,13 @@ class AdminOrderController extends Controller
             'orders' => $order,
             'staffs' => $staffs
         ]);
+    }
+
+    public function update(AdminUpdateOrderRequest $request, Order $order){
+        // dd($request->validated());
+        // dd($order);
+        $order->update($request->validated());
+        return to_route('admin.orders')->with('success','Đã cập nhật đơn hàng');
+
     }
 }

@@ -14,8 +14,13 @@ class StaffOrderController extends Controller
 {
     public function index(){
         $user = Auth::user();
-        $orders = Order::where('staff_id',$user->id)->get();
-        return Inertia::render('Staff/Order/Index');
+        $orders = Order::where('staff_id',$user->id)
+                ->whereIn('status', ['Đã nhận đơn', 'Đang giao hàng'])
+                ->with('customer')->get();
+
+        return Inertia::render('Staff/Order/Index',[
+            'orders' => $orders
+        ]);
     }
 
 
@@ -25,5 +30,12 @@ class StaffOrderController extends Controller
         $fields = $request->validated();
         $user->update($fields);
         return back()->with('success','Cập nhật thành công.');
+    }
+
+
+    public function updateStatus(Request $request, Order $order){
+        // dd($request->all());
+        $order->update($request->all());
+        return back()->with('success','Đã cập nhật trạng thái đơn hàng.');
     }
 }

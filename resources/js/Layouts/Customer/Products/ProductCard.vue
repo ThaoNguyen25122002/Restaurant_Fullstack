@@ -72,8 +72,8 @@ const addToCart = (product) => {
                 />
             </Link>
             <p
-                v-if="product.quantity === 0"
-                class="absolute font-medium text-white top-1 left-1 px-2 rounded-xl bg-rose-600 pt-[2px]"
+                v-if="product.quantity <= 0"
+                class="absolute font-medium text-white top-1 right-1 px-2 rounded-xl bg-rose-600 pt-[2px]"
             >
                 Hết Món
             </p>
