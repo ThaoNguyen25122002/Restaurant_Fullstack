@@ -54,5 +54,7 @@ defineProps({
     <DishList :categories="categories" />
 
     <!-- Product List -->
-    <ProductList :products="products" title="Có thể bạn sẽ thích món này" />
+    <ProductList :products="products" title="Top bán chạy" />
+    <!-- Banner -->
+    <img :src="'/storage/banner/banner.jpg'" alt="banner" class="mt-10" />
 </template>

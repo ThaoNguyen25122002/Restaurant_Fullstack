@@ -103,6 +103,9 @@ watch(selectedStatus, (newValue) => {
                                         <option value="Đã giao hàng">
                                             Đã giao hàng
                                         </option>
+                                        <option value="Đã đánh giá">
+                                            Đã đánh giá
+                                        </option>
                                         <option value=" Đã hủy">Đã hủy</option>
                                     </select>
                                 </div>

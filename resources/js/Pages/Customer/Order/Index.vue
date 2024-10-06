@@ -1,5 +1,5 @@
 <script setup>
-import { router } from "@inertiajs/vue3";
+import { router, useForm } from "@inertiajs/vue3";
 import CustomerLayout from "../../../Layouts/Customer/CustomerLayout.vue";
 import Swal from "sweetalert2";
 import { ref } from "vue";
@@ -36,6 +36,8 @@ const getOrderBadgeClass = (status) => {
             return "bg-green-600 text-white";
         case "Đã hủy":
             return "bg-gray-600 text-white";
+        case "Đã đánh giá":
+            return "bg-red-400 text-white";
         default:
             return "bg-gray-600 text-white";
     }
@@ -76,25 +78,45 @@ const handleDelete = (orderId) => {
 
 const dialogVisible = ref(false);
 
-const handleReview = () => {
+const handleReview = (items, orderId) => {
+    // console.log(items);
+    formReview.orderId = orderId;
+    formReview.productIds = items.map((item) => item.product_id);
+    console.log(formReview);
+
     dialogVisible.value = true;
 };
+const formReview = useForm({
+    orderId: null,
+    rating: null,
+    review: null,
+    productIds: [],
+});
 const rating = ref(0); // Điểm rating hiện tại
 const hoverRating = ref(0); // Điểm rating khi di chuột qua các ngôi sao
-const review = ref(""); // Nội dung nhận xét
+const review = ref("");
 
-// Cập nhật điểm rating khi người dùng click vào ngôi sao
 const setRating = (star) => {
     rating.value = star;
 };
 
-// Gửi đánh giá
 const submitReview = () => {
-    console.log(`Rating: ${rating.value}`);
-    console.log(`Review: ${review.value}`);
-    // Bạn có thể thêm logic gửi dữ liệu qua API ở đây
+    (formReview.rating = rating.value), (formReview.review = review.value);
+    formReview.post(route("reviews.create", { id: formReview.orderId }), {
+        onSuccess: (page) => {
+            Swal.fire({
+                title: page.props.flash.success,
+                // text: page.props.flash.success,
+                icon: "success",
+            });
+            handleClose();
+        },
+    });
+    console.log(formReview);
 };
 const handleClose = () => {
+    formReview.clearErrors();
+    formReview.reset();
     rating.value = 0;
     hoverRating.value = 0;
     review.value = "";
@@ -108,13 +130,14 @@ const handleClose = () => {
     <el-dialog v-model="dialogVisible" width="500" :before-close="handleClose">
         <!-- Form -->
 
-        <div
-            class="min-h-screen flex flex-col items-center justify-center bg-gray-100"
+        <form
+            @submit.prevent="submitReview"
+            class="flex flex-col items-center justify-center bg-gray-100"
         >
             <!-- Rating Section -->
-            <div class="bg-white shadow-lg rounded-lg p-6 w-full max-w-md">
+            <div class="bg-white rounded-lg p-6 w-full">
                 <h1 class="text-2xl font-semibold text-gray-700 mb-4">
-                    Đánh giá món ăn
+                    Đánh giá đơn hàng
                 </h1>
 
                 <!-- Rating Stars -->
@@ -150,9 +173,15 @@ const handleClose = () => {
                             />
                         </svg>
                     </span>
+                    <small class="text-red-500 block">{{
+                        formReview.errors.rating
+                    }}</small>
                 </div>
 
                 <!-- Review Section -->
+                <small class="text-red-500">{{
+                    formReview.errors.review
+                }}</small>
                 <textarea
                     v-model="review"
                     class="w-full border border-gray-300 rounded-lg p-3 mb-4"
@@ -162,29 +191,28 @@ const handleClose = () => {
 
                 <!-- Submit Button -->
                 <button
-                    @click="submitReview"
                     class="bg-red-600 text-white font-bold py-2 px-4 rounded hover:bg-red-700 w-full"
                 >
                     Gửi đánh giá
                 </button>
             </div>
-        </div>
+        </form>
 
         <!-- End Form -->
 
-        <template #footer>
+        <!-- <template #footer>
             <div class="dialog-footer">
                 <el-button @click="dialogVisible = false">Cancel</el-button>
                 <el-button type="primary" @click="dialogVisible = false">
                     Confirm
                 </el-button>
             </div>
-        </template>
+        </template> -->
     </el-dialog>
     <!-- End Dialog Form Create or Edit User -->
     <div class="min-h-screen flex flex-col mt-[72px]">
         <!-- Main Content -->
-        <main class="flex-grow container mx-auto p-6">
+        <main class="flex-grow container mx-auto p-6" v-if="orders.length > 0">
             <h2 class="text-xl font-semibold mb-6 text-red-600">
                 Danh Sách Đơn Hàng
             </h2>
@@ -255,7 +283,7 @@ const handleClose = () => {
                         </button> -->
                         <button
                             v-if="order.status === 'Đã giao hàng'"
-                            @click="handleReview"
+                            @click="handleReview(order.order_items, order.id)"
                             class="bg-red-600 text-white font-bold py-2 px-4 rounded hover:bg-red-700"
                         >
                             Đánh giá
@@ -271,5 +299,9 @@ const handleClose = () => {
                 </div>
             </div>
         </main>
+
+        <h4 v-else class="text-2xl font-bold text-red-300 text-center mt-10">
+            Hiện bạn không có đơn hàng nào!
+        </h4>
     </div>
 </template>

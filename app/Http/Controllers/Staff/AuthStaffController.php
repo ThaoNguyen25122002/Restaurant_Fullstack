@@ -16,7 +16,7 @@ class AuthStaffController extends Controller
             $user = Auth::user();
             // dd($request->all());
             if($user->role->name === 'staff'){
-                return redirect()->intended(route('staff.orders'));
+                return to_route('staff.orders');
             }else{
                 Auth::logout();
                 return back()->withErrors(['email'=>"Bạn không có quyền truy cập nhân viên!"])->onlyInput('email');

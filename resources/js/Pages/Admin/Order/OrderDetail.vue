@@ -15,7 +15,7 @@ const form = useForm({
     status: props.orders.status,
     staff_id: props.orders.staff_id || "",
 });
-// console.log(form.staff_id);
+console.log(form.status);
 
 const formattedDate = (createdAt) => {
     const date = new Date(createdAt); // Chuyển string thành Date object
@@ -67,22 +67,26 @@ const updateOrderDetail = () => {
             <div class="grid grid-cols-2 gap-4">
                 <div>
                     <label class="text-gray-600">Tên khách hàng</label>
-                    <p class="bg-gray-100 p-2 rounded">Nguyễn Văn A</p>
+                    <p class="bg-gray-100 p-2 rounded">
+                        {{ orders.customer.name }}
+                    </p>
                 </div>
                 <div>
                     <label class="text-gray-600">Email</label>
                     <p class="bg-gray-100 p-2 rounded">
-                        nguyenvana@example.com
+                        {{ orders.customer.email }}
                     </p>
                 </div>
                 <div>
                     <label class="text-gray-600">Số điện thoại</label>
-                    <p class="bg-gray-100 p-2 rounded">0123 456 789</p>
+                    <p class="bg-gray-100 p-2 rounded">
+                        {{ orders.customer.phone }}
+                    </p>
                 </div>
                 <div>
                     <label class="text-gray-600">Địa chỉ giao hàng</label>
                     <p class="bg-gray-100 p-2 rounded">
-                        123 Đường ABC, Phường XYZ, Quận 1, TP. HCM
+                        {{ orders.delivery_address }}
                     </p>
                 </div>
             </div>
@@ -102,6 +106,7 @@ const updateOrderDetail = () => {
                         <option value="Đã nhận đơn">Đã nhận đơn</option>
                         <option value="Đang giao hàng">Đang giao hàng</option>
                         <option value="Đã giao hàng">Đã giao hàng</option>
+                        <option value="Đã đánh giá">Đã đánh giá</option>
                         <option value="Đã hủy">Đã hủy</option>
                     </select>
                     <small class="text-red-500">{{ form.errors.status }}</small>

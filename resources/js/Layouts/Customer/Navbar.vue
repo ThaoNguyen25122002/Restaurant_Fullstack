@@ -121,6 +121,11 @@ const handleSearch = () => {
                     @click="handleClose"
                     :href="route('foods.menu')"
                     class="hover:bg-red-500 hover:text-slate-100 ease-in-out duration-300 py-3 px-3 rounded-md"
+                    :class="
+                        $page.component === 'Customer/Menu/Index'
+                            ? 'text-red-900 font-semibold'
+                            : ''
+                    "
                 >
                     Thực Đơn
                 </Link>
@@ -212,7 +217,9 @@ const handleSearch = () => {
                 </Link>
                 <div v-else class="relative group shrink-0 cursor-pointer">
                     <div class="flex items-center gap-1">
-                        <span class="py-2">Cong Thao</span>
+                        <span class="py-2">{{
+                            $page.props.auth.user.name
+                        }}</span>
                         <svg
                             class="size-4 text-gray-800 group-hover:rotate-180 transition-all duration-200"
                             aria-hidden="true"
@@ -231,7 +238,7 @@ const handleSearch = () => {
                     </div>
 
                     <ul
-                        class="absolute hidden group-hover:block -left-12 right-0 shadow-md rounded-sm cursor-pointer z-30 bg-white font-normal"
+                        class="absolute hidden group-hover:block w-36 right-0 shadow-md rounded-sm cursor-pointer z-30 bg-white font-normal"
                     >
                         <Link
                             @click="handleClose"

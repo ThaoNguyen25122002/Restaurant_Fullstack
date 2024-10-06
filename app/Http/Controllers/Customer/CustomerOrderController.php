@@ -13,7 +13,7 @@ class CustomerOrderController extends Controller
     public function index(){
         $orders = Order::where('customer_id',Auth::id())
                         ->where('status', '!=', 'Đã hủy')
-                        ->orderByRaw("FIELD(status, 'Đang giao hàng', 'Đã nhận đơn', 'Chờ duyệt', 'Đã giao hàng')")
+                        ->orderByRaw("FIELD(status, 'Đang giao hàng', 'Đã nhận đơn', 'Chờ duyệt', 'Đã giao hàng', 'Đã đánh giá')")
                         ->with('customer','staff','orderItems.product')->get();
         return Inertia::render('Customer/Order/Index',[
             'orders' => $orders

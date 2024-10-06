@@ -59,6 +59,16 @@ const addToCart = (product) => {
 //         },
 //     });
 // };
+const formatNumber = (value) => {
+    const numberValue = parseFloat(value);
+
+    // Kiểm tra nếu phần thập phân bằng 0, làm tròn thành số nguyên
+    if (Number.isInteger(numberValue)) {
+        return Math.round(numberValue);
+    }
+    // Nếu phần thập phân khác 0, làm tròn đến 1 chữ số thập phân
+    return numberValue.toFixed(1);
+};
 </script>
 
 <template>
@@ -98,14 +108,40 @@ const addToCart = (product) => {
                     {{ product.description }}
                 </p>
             </div>
+
             <div class="flex items-center justify-between mt-3">
-                <p class="text-sm text-gray-500">
-                    Đã bán {{ product.sold_quantity }}
-                </p>
+                <div>
+                    <div
+                        class="flex text-sm items-end"
+                        v-if="product.average_rating > 0"
+                    >
+                        <svg
+                            class="size-5 text-yellow-500"
+                            aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="24"
+                            height="24"
+                            fill="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                d="M13.849 4.22c-.684-1.626-3.014-1.626-3.698 0L8.397 8.387l-4.552.361c-1.775.14-2.495 2.331-1.142 3.477l3.468 2.937-1.06 4.392c-.413 1.713 1.472 3.067 2.992 2.149L12 19.35l3.897 2.354c1.52.918 3.405-.436 2.992-2.15l-1.06-4.39 3.468-2.938c1.353-1.146.633-3.336-1.142-3.477l-4.552-.36-1.754-4.17Z"
+                            />
+                        </svg>
+                        <span class="transform translate-y-[2px]">
+                            {{ formatNumber(product.average_rating) }}
+                        </span>
+                    </div>
+                    <p v-else class="text-sm">(Chưa có đánh giá)</p>
+                    <p class="text-sm text-gray-500 mt-1">
+                        Đã bán {{ product.sold_quantity }}
+                    </p>
+                </div>
+
                 <button
                     @click="addToCart(product)"
                     :disabled="product.quantity === 0"
-                    class="disabled:opacity-50 disabled:cursor-not-allowed bg-red-400 text-white text-xs py-1 px-3 rounded-md uppercase hover:bg-red-600 transition"
+                    class="disabled:opacity-50 disabled:cursor-not-allowed bg-red-400 text-white text-xs py-2 px-4 rounded-md uppercase hover:bg-red-600 transition"
                 >
                     Thêm vào giỏ
                 </button>

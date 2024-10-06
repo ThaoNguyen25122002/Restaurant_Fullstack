@@ -161,7 +161,7 @@ const formatCurrency = (value) => {
                             formatCurrency(totalPrice)
                         }}</span>
                     </div>
-                    <div class="flex items-center justify-between mb-2">
+                    <!-- <div class="flex items-center justify-between mb-2">
                         <input
                             type="text"
                             class="w-1/2 border border-gray-300 rounded-lg p-2"
@@ -176,7 +176,7 @@ const formatCurrency = (value) => {
                     <div class="flex justify-between mb-2">
                         <span class="text-gray-700">Giảm Giá</span>
                         <span class="text-gray-700">89,600đ</span>
-                    </div>
+                    </div> -->
                     <div class="flex justify-between mb-2">
                         <span class="text-gray-700">Phí Vận Chuyển</span>
                         <span class="text-gray-700">Miễn Phí</span>
@@ -204,7 +204,9 @@ const formatCurrency = (value) => {
                     <span class="text-red-500 font-bold text-lg"
                         >Tổng Tiền</span
                     >
-                    <span class="text-red-500 font-bold text-lg"></span>
+                    <span class="text-red-500 font-bold text-lg">{{
+                        formatCurrency(totalPrice)
+                    }}</span>
                 </div>
 
                 <button

@@ -4,7 +4,9 @@ use App\Http\Controllers\Admin\AdminOrderController;
 use App\Http\Controllers\Admin\AdminProfileController;
 use App\Http\Controllers\Admin\AuthAdminController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\StatisticalController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Customer\AuthCustomerController;
 use App\Http\Controllers\Customer\HomeController;
@@ -14,6 +16,7 @@ use App\Http\Controllers\Customer\CustomerOrderController;
 use App\Http\Controllers\Customer\CustomerProfileController;
 use App\Http\Controllers\Customer\FoodController;
 use App\Http\Controllers\Customer\MenuController;
+use App\Http\Controllers\Customer\ReviewController;
 use App\Http\Controllers\Customer\SearchQueryController;
 use App\Http\Controllers\Staff\AuthStaffController;
 use App\Http\Controllers\Staff\StaffOrderController;
@@ -65,6 +68,8 @@ Route::middleware('auth')->group(function(){
     // ================== Orders ================ //
     Route::get('/orders',[CustomerOrderController::class,'index'])->name('orders');
     Route::delete('/orders/{order}/delete',[CustomerOrderController::class,'delete'])->name('orders.delete');
+    // ================== Reviews ================ //
+    Route::post('/reviews/{order}',[ReviewController::class,'store'])->name('reviews.create');
     
 });
 
@@ -76,9 +81,7 @@ Route::prefix('admin')->group(function(){
     });
     
     Route::middleware('isAdmin')->group(function(){
-        Route::get('dashboard', function () {
-            return Inertia::render('Admin/Dashboard/Index');
-        })->name('admin.dashboard');
+        Route::get('dashboard', [DashboardController::class,'index'])->name('admin.dashboard');
         // ================== Admin Profile ==================//
         Route::put('profile/{user}/update',[AdminProfileController::class,'updateProfile'])->name('admin.profile.update');
         Route::post('admin/logout',[AuthAdminController::class,'logout'])->name('admin.logout');
@@ -105,6 +108,8 @@ Route::prefix('admin')->group(function(){
         Route::get('orders',[AdminOrderController::class,'index'])->name('admin.orders');
         Route::get('orders/{order}/detail',[AdminOrderController::class,'show'])->name('admin.orders.detail');
         Route::put('orders/{order}/detail',[AdminOrderController::class,'update'])->name('admin.orders.detail.update');
+        // ================== Statistical ================ //
+        Route::get('statistical',[StatisticalController::class,'index'])->name('admin.statistical');
     });
 });
 

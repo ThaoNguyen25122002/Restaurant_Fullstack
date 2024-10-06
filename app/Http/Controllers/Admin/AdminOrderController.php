@@ -49,7 +49,7 @@ class AdminOrderController extends Controller
 
     public function show(Order $order){
         // $orderDetail = $order->with('orderItems')->get();
-        $order->load('orderItems.product');
+        $order->load(['orderItems.product','customer']);
         $staffs = User::where('role_id',3)->get();
         // dd($order);
         return Inertia::render('Admin/Order/OrderDetail',[

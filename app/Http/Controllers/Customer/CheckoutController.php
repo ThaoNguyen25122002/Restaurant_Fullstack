@@ -31,7 +31,7 @@ class CheckoutController extends Controller
     public function paymentCod(Request $request){
         $customerId = Auth::id();
         $orderData = $request->all();
-        $orderCode = 'ORDER-' . strtoupper(Str::random(10));
+        $orderCode = strtoupper(Str::random(10));
         $orderData['customer_id'] = $customerId;
         $orderData['order_code'] = $orderCode;
         $order = Order::create($orderData);
@@ -119,7 +119,7 @@ class CheckoutController extends Controller
     // }
     public function payment_vnpay(Request $request)
     {
-        $orderCode = 'ORDER-' . strtoupper(Str::random(10));
+        $orderCode = strtoupper(Str::random(10));
         // dd($request->note);
         $vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
         $vnp_Returnurl = route('vnpay.return'); // Đảm bảo bạn có route xử lý kết quả thanh toán

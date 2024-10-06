@@ -49,7 +49,13 @@ defineOptions({
 });
 
 const updateQuantity = (product, quantity) => {
-    router.patch(route("cart.update", { id: product.id }), { quantity });
+    router.patch(
+        route("cart.update", { id: product.id }),
+        { quantity },
+        {
+            preserveScroll: true,
+        }
+    );
 };
 const removeItem = (id) => {
     // router.delete(route("cart.delete", { id }));
