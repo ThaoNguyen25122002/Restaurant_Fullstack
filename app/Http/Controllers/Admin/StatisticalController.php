@@ -99,7 +99,7 @@ class StatisticalController extends Controller
     // dd($startDate, $now);
     // Lấy doanh thu cho khoảng thời gian đã chọn
     $doanhThu = Order::whereBetween('created_at', [$startDate, $now])
-    ->where('status', '!=', 'Đã hủy') // Tính doanh thu cho tất cả đơn hàng chưa bị hủy
+    ->whereIn('status', ['Đã giao hàng', 'Đã đánh giá']) // Tính doanh thu cho tất cả đơn hàng chưa bị hủy
     ->sum('total_amount');
     // dd($doanhThu);
     // Tổng số món ăn đã bán
@@ -148,13 +148,13 @@ class StatisticalController extends Controller
         // dd($tongMonAn);
     // Trả về view với dữ liệu thống kê
     return Inertia::render('Admin/Statistical/Index', [
-        'doanhThu' => $doanhThu,
-        'tongMonAn' => $tongMonAn,
-        'tongDonHang' => $tongDonHang,
-        'tiLeThanhCong' => $tiLeThanhCong,
-        'tiLeThatBai' => $tiLeThatBai,
-        'banChayNhat' => $banChayNhat,
-        'banItNhat' => $banItNhat,
+        'doanhThu' => $doanhThu ?  $doanhThu : 0,
+        'tongMonAn' => $tongMonAn ? $tongMonAn : 0,
+        'tongDonHang' => $tongDonHang ? $tongDonHang : 0,
+        'tiLeThanhCong' => $tiLeThanhCong ? $tiLeThanhCong : 0,
+        'tiLeThatBai' => $tiLeThatBai ? $tiLeThatBai : 0,
+        'banChayNhat' => $banChayNhat ? $banChayNhat : null,
+        'banItNhat' => $banItNhat ? $banItNhat : null,
     ]);
 }
 

@@ -69,7 +69,7 @@ const formatCurrency = (value) => {
             <div class="bg-white p-6 rounded-lg shadow-md">
                 <h2 class="text-lg font-semibold text-gray-700">Đơn hàng</h2>
                 <p class="text-4xl font-bold text-yellow-500 mt-2">
-                    {{ tongDonHang }}
+                    {{ tongDonHang ? tongDonHang : 0 }}
                 </p>
                 <!-- <span class="text-sm text-gray-500">{{ timeDescription }}</span> -->
             </div>
@@ -78,7 +78,7 @@ const formatCurrency = (value) => {
             <div class="bg-white p-6 rounded-lg shadow-md">
                 <h2 class="text-lg font-semibold text-gray-700">Doanh thu</h2>
                 <p class="text-4xl font-bold text-green-500 mt-2">
-                    {{ formatCurrency(doanhThu) }}
+                    {{ doanhThu ? formatCurrency(doanhThu) : 0 }}
                 </p>
                 <!-- <span class="text-sm text-gray-500">{{ timeDescription }}</span> -->
             </div>
@@ -87,7 +87,7 @@ const formatCurrency = (value) => {
             <div class="bg-white p-6 rounded-lg shadow-md">
                 <h2 class="text-lg font-semibold text-gray-700">Món ăn bán</h2>
                 <p class="text-4xl font-bold text-blue-500 mt-2">
-                    {{ tongMonAn }}
+                    {{ tongMonAn ? tongMonAn : 0 }}
                 </p>
                 <!-- <span class="text-sm text-gray-500">{{ timeDescription }}</span> -->
             </div>
@@ -100,10 +100,15 @@ const formatCurrency = (value) => {
                     Món bán chạy nhất
                 </h3>
                 <p class="text-xl text-green-600">
-                    {{ banChayNhat.product_name }}
+                    {{
+                        banChayNhat
+                            ? banChayNhat.product_name
+                            : "Chưa có món được bán hôm nay"
+                    }}
                 </p>
                 <p class="text-sm text-gray-500">
-                    Số lượng bán: {{ banChayNhat.total_quantity }}
+                    Số lượng bán:
+                    {{ banChayNhat ? banChayNhat.total_quantity : 0 }}
                 </p>
             </div>
 
@@ -111,9 +116,16 @@ const formatCurrency = (value) => {
                 <h3 class="text-lg font-semibold text-gray-700 mb-2">
                     Món ít được ưa chuộng nhất
                 </h3>
-                <p class="text-xl text-red-600">{{ banItNhat.product_name }}</p>
+                <p class="text-xl text-red-600">
+                    {{
+                        banItNhat
+                            ? banItNhat.product_name
+                            : "Chưa có dữ liệu món bán hôm nay"
+                    }}
+                </p>
                 <p class="text-sm text-gray-500">
-                    Số lượng bán: {{ banItNhat.total_quantity }}
+                    Số lượng bán:
+                    {{ banItNhat ? banItNhat.total_quantity : 0 }}
                 </p>
             </div>
         </div>
@@ -125,7 +137,7 @@ const formatCurrency = (value) => {
                     Tỷ lệ đơn hàng thành công
                 </h3>
                 <p class="text-4xl font-bold text-green-500">
-                    {{ Math.round(tiLeThanhCong) }}%
+                    {{ tiLeThanhCong ? Math.round(tiLeThanhCong) : 0 }}%
                 </p>
             </div>
 
@@ -134,7 +146,7 @@ const formatCurrency = (value) => {
                     Tỷ lệ đơn hàng thất bại
                 </h3>
                 <p class="text-4xl font-bold text-red-500">
-                    {{ Math.round(tiLeThatBai) }}%
+                    {{ tiLeThatBai ? Math.round(tiLeThatBai) : 0 }}%
                 </p>
             </div>
         </div>

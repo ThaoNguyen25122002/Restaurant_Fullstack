@@ -41,6 +41,11 @@ Route::get('categories/{category:slug}',[FoodController::class,'getFoodByCategor
 Route::get('menu/foods',[MenuController::class,'index'])->name('foods.menu');
 // ================== Search Foods ================ //    
 Route::get('foods',[SearchQueryController::class,'index'])->name('foods.search');
+// ================== Contact ================ //    
+Route::inertia('/contact','Customer/Contact/Index')->name('contact');
+
+// ================== About ================ //    
+Route::inertia('/about','Customer/About/Index')->name('about');
 
 
 // ================================== Customer ==================================== //

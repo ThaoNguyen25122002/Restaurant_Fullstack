@@ -131,15 +131,25 @@ const handleSearch = () => {
                 </Link>
                 <Link
                     @click="handleClose"
-                    :href="route('home')"
+                    :href="route('about')"
                     class="hover:bg-red-500 hover:text-slate-100 ease-in-out duration-300 py-3 px-3 rounded-md"
+                    :class="
+                        $page.component === 'Customer/About/Index'
+                            ? 'text-red-900 font-semibold'
+                            : ''
+                    "
                 >
                     Giới Thiệu
                 </Link>
                 <Link
                     @click="handleClose"
-                    :href="route('home')"
+                    :href="route('contact')"
                     class="hover:bg-red-500 hover:text-slate-100 ease-in-out duration-300 py-3 px-3 rounded-md"
+                    :class="
+                        $page.component === 'Customer/Contact/Index'
+                            ? 'text-red-900 font-semibold'
+                            : ''
+                    "
                 >
                     Liên Hệ
                 </Link>

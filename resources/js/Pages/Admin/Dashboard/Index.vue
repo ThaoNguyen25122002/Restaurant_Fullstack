@@ -69,7 +69,7 @@ defineOptions({ layout: AdminLayout });
 const toggle = ref(false);
 </script>
 <template>
-    <div class="min-h-screen bg-gray-100">
+    <div class="min-h-screen">
         <!-- Phần nội dung chính của Dashboard -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <!-- Thẻ Tổng Quan -->
