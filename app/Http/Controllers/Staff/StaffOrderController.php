@@ -12,10 +12,11 @@ use Inertia\Inertia;
 
 class StaffOrderController extends Controller
 {
-    public function index(){
+    public function index(Request $request){
+        $status = $request->input('status','Đã nhận đơn');
         $user = Auth::user();
         $orders = Order::where('staff_id',$user->id)
-                ->whereIn('status', ['Đã nhận đơn', 'Đang giao hàng'])
+                ->where('status', $status)->latest()
                 ->with('customer')->get();
 
         return Inertia::render('Staff/Order/Index',[

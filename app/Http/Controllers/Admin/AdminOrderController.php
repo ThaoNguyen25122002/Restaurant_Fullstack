@@ -35,6 +35,7 @@ class AdminOrderController extends Controller
             // Lọc theo trạng thái nếu có yêu cầu
             $query->where('status', $request->status);
         })
+        ->latest()
         ->with('customer')
         ->paginate(10)
         ->withQueryString();

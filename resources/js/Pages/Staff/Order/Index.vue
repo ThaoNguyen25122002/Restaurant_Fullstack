@@ -12,6 +12,7 @@ const form = useForm({
     email: page.props.auth.user.email,
     phone: page.props.auth.user.phone,
 });
+const selectedStatus = ref("Đã nhận đơn");
 // const status = ref(props.orders.status);
 // console.log(status.value);
 const updateOrderStatus = (orderId, status) => {
@@ -43,6 +44,18 @@ const updateProfile = () => {
             });
         },
     });
+};
+
+const handleOrdersStatus = () => {
+    router.get(
+        route("staff.orders"),
+        { status: selectedStatus.value },
+        {
+            onSuccess: () => {},
+            preserveState: true,
+            preserveScroll: true,
+        }
+    );
 };
 const formatCurrency = (value) => {
     return new Intl.NumberFormat("vi-VN", {
@@ -113,15 +126,32 @@ const formatCurrency = (value) => {
 
             <!-- Đơn hàng được chỉ định -->
             <div class="bg-white shadow-lg rounded-lg p-6">
-                <h2 class="text-xl font-semibold mb-4">
-                    {{
-                        orders.length > 0
-                            ? "Đơn hàng được chỉ định để giao"
-                            : "Không có đơn cần giao"
-                    }}
-                </h2>
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-semibold">
+                        {{
+                            orders.length > 0
+                                ? "Đơn hàng được chỉ định để giao"
+                                : "Không có đơn cần giao"
+                        }}
+                    </h2>
+                    <div class="">
+                        <select
+                            v-model="selectedStatus"
+                            @change="handleOrdersStatus"
+                            class="w-full bg-gray-100 p-2 rounded"
+                        >
+                            <option value="Đã nhận đơn">Đơn đã xác nhận</option>
+                            <option value="Đang giao hàng">
+                                Đang giao hàng
+                            </option>
+                            <option value="Đã giao hàng">Đã giao hàng</option>
+                            <option value="Đã hủy">Đã hủy</option>
+                            <option value="Đã đánh giá">Đã đánh giá</option>
+                        </select>
+                    </div>
+                </div>
 
-                <table class="w-full table-auto" v-if="orders.length > 0">
+                <table class="w-full table-auto">
                     <thead>
                         <tr class="bg-gray-200 text-gray-600 uppercase text-sm">
                             <th class="p-2 text-left">Mã đơn hàng</th>
@@ -135,7 +165,7 @@ const formatCurrency = (value) => {
                             <th class="p-2 text-left">Trạng thái</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody v-if="orders.length > 0">
                         <tr
                             v-for="order in orders"
                             :key="order.id"

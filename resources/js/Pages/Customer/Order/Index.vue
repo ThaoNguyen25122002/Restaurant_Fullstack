@@ -289,6 +289,12 @@ const handleClose = () => {
                             Đánh giá
                         </button>
                         <button
+                            v-else-if="order.status === 'Đã đánh giá'"
+                            class="bg-gray-600 text-white font-bold py-2 px-4 rounded hover:bg-gray-700"
+                        >
+                            Mua lại
+                        </button>
+                        <button
                             v-else
                             @click="handleDelete(order.id)"
                             class="bg-gray-600 text-white font-bold py-2 px-4 rounded hover:bg-gray-700"

@@ -115,6 +115,7 @@ Route::prefix('admin')->group(function(){
         Route::put('orders/{order}/detail',[AdminOrderController::class,'update'])->name('admin.orders.detail.update');
         // ================== Statistical ================ //
         Route::get('statistical',[StatisticalController::class,'index'])->name('admin.statistical');
+        Route::get('statistical/orders',[StatisticalController::class,'orderStatistics'])->name('admin.statistical.orders');
     });
 });
 

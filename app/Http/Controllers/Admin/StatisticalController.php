@@ -99,7 +99,7 @@ class StatisticalController extends Controller
     // dd($startDate, $now);
     // Lấy doanh thu cho khoảng thời gian đã chọn
     $doanhThu = Order::whereBetween('created_at', [$startDate, $now])
-    ->whereIn('status', ['Đã giao hàng', 'Đã đánh giá']) // Tính doanh thu cho tất cả đơn hàng chưa bị hủy
+    ->whereIn('status', ['Đã giao hàng', 'Đã đánh giá']) 
     ->sum('total_amount');
     // dd($doanhThu);
     // Tổng số món ăn đã bán
@@ -157,5 +157,10 @@ class StatisticalController extends Controller
         'banItNhat' => $banItNhat ? $banItNhat : null,
     ]);
 }
+
+
+    public function orderStatistics(){
+        return Inertia::render('Admin/Statistical/OrderStatistics');
+    }
 
 }
