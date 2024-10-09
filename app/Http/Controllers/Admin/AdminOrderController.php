@@ -63,6 +63,15 @@ class AdminOrderController extends Controller
         // dd($request->validated());
         // dd($order);
         $order->update($request->validated());
+        if ($order->status === 'Đã nhận đơn' && is_null($order->delivery_start_time)) {
+            $order->delivery_start_time = now();
+        }
+    
+        if ($order->status === 'Đã giao hàng' && is_null($order->delivery_end_time)) {
+            $order->delivery_end_time = now();
+        }
+    
+        $order->save();
         return to_route('admin.orders')->with('success','Đã cập nhật đơn hàng');
 
     }

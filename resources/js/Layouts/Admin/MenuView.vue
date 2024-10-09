@@ -237,17 +237,17 @@ const toggle = ref(false);
                         :class="!toggle ? 'hidden' : 'block'"
                     >
                         <li>
-                            <a
-                                href="#"
+                            <Link
+                                :href="route('admin.statistical.food')"
                                 class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
-                                >Món</a
+                                >Món</Link
                             >
                         </li>
                         <li>
-                            <a
-                                href="#"
+                            <Link
+                                :href="route('admin.statistical.categories')"
                                 class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
-                                >Danh Mục</a
+                                >Danh Mục</Link
                             >
                         </li>
                         <li>
@@ -258,10 +258,10 @@ const toggle = ref(false);
                             >
                         </li>
                         <li>
-                            <a
-                                href="#"
+                            <Link
+                                :href="route('admin.statistical.customers')"
                                 class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
-                                >Khách Hàng</a
+                                >Khách Hàng</Link
                             >
                         </li>
                         <li>

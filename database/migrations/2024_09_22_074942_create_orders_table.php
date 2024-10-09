@@ -21,6 +21,8 @@ return new class extends Migration
             $table->enum('status', ['Chờ duyệt', 'Đã nhận đơn', 'Đang giao hàng', 'Đã giao hàng', 'Đã hủy', 'Đã đánh giá'])->default('Chờ duyệt');
             $table->string('delivery_address');
             $table->string('note')->nullable();
+            $table->timestamp('delivery_start_time')->nullable()->after('note');
+            $table->timestamp('delivery_end_time')->nullable()->after('delivery_start_time');
             $table->timestamps();
         });
     }

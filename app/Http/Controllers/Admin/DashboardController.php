@@ -122,11 +122,10 @@ class DashboardController extends Controller
             DB::raw('SUM(total_amount) as total')
         )
         ->whereYear('created_at', $currentYear)
-        ->whereIn('status', ['Đã giao hàng', 'Đã đánh giá']) // Lọc theo status nếu cần
+        ->whereIn('status', ['Đã giao hàng', 'Đã đánh giá']) 
         ->groupBy(DB::raw('MONTH(created_at)'))
         ->orderBy('month')
         ->get();
         return $monthlyRevenue;
-        // return response()->json($monthlyRevenue);
     }
 }

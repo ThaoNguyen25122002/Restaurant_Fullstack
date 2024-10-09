@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\Product;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -159,8 +162,143 @@ class StatisticalController extends Controller
 }
 
 
-    public function orderStatistics(){
-        return Inertia::render('Admin/Statistical/OrderStatistics');
+    public function orderStatistics(Request $request){
+        $timeframe = $request->input('timeFrame','today');
+        // $users = DB::table('users')->leftJoin('orders','users.id', '=', 'orders.customer_id')->select('users.name', 'orders.total_amount')->get();
+        $now = Carbon::now();
+        switch($timeframe){
+            case 'week':
+                $timeframe = (clone $now)->startOfWeek();
+                break;
+            case 'month':
+                $timeframe = (clone $now)->startOfMonth();
+                break;
+            case 'year':
+                $timeframe = (clone $now)->startOfYear();
+                break;
+            case 'today':
+            default:
+                $timeframe = (clone $now)->startOfDay();
+                break;
+        }
+        $tongDonHang = Order::whereIn('status',['Đã hủy','Đã giao hàng', 'Đã đánh giá'])->whereBetween('created_at',[$timeframe, $now])->count();
+        // $donHangThanhCong = Order::whereIn('status',['Đã giao hàng', 'Đã đánh giá'])->whereBetween('created_at',[$timeframe, $now])->count();
+        $donHangThatBai = Order::where('status','Đã hủy')->whereBetween('created_at',[$timeframe, $now])->count();
+        $tongDoanhThu = Order::whereIn('status',['Đã giao hàng', 'Đã đánh giá'])->whereBetween('created_at',[$timeframe, $now])->sum('total_amount');
+        $donDangXuLy = Order::whereIn('status',['Chờ duyệt', 'Đã nhận đơn', 'Đang giao hàng'])->whereBetween('created_at',[$timeframe, $now])->count();
+        $donBiHuy = Order::where('status','Đã hủy')->whereBetween('created_at',[$timeframe, $now])->count();
+        
+        return Inertia::render('Admin/Statistical/OrderStatistics',[
+            'tongDonHang' => $tongDonHang,
+            'donHangThatBai' => $donHangThatBai,
+            'tongDoanhThu' => $tongDoanhThu,
+            'donDangXuLy' => $donDangXuLy,
+            'donBiHuy' => $donBiHuy,
+        ]);
+    }
+
+
+
+    public function customerStatistics(){
+        // $soLuongDonTheoTungKhachHang = User::join('orders','orders.customer_id','users.id')->select()
+        $soLuongKhachHang = User::where('role_id',3)->count();
+        $soLuongDonHang = Order::whereIn('status',['Đã giao hàng','Đã đánh giá'])->count();
+        $tongDoanhThu =  Order::whereIn('status',['Đã giao hàng','Đã đánh giá'])->sum('total_amount');
+        $doanhThuTrungBinhCuaMoiKhachHang = $tongDoanhThu/$soLuongKhachHang;
+        $soLuongDonTheoTrungBinhCuaKhachHang = $soLuongDonHang/$soLuongKhachHang;
+        $danhSachKhachCoDoanhThuCaoNhat = Order::join('users','orders.customer_id','=','users.id')
+                                                ->select('users.name',
+                                                DB::raw('SUM(orders.total_amount) as total_revenue'),
+                                                DB::raw('COUNT(orders.id) as total_orders'))   
+                                                ->groupBy('users.id','users.name')
+                                                ->orderByDesc('total_revenue')
+                                                ->take(5)
+                                                ->get();      
+        $newCustomers = User::select(
+            DB::raw('MONTH(created_at) as month'),
+            DB::raw('COUNT(id) as total')
+        )
+        ->where('role_id',3)
+        ->whereYear('created_at', Carbon::now()->year)
+        ->groupBy(DB::raw('MONTH(created_at)'))
+        ->orderBy('month')
+        ->get();
+        // dd($newCustomers);                                    
+                                                                                                        
+        // dd($doanhThuTrungBinhCuaMoiKhachHang);
+        return Inertia::render('Admin/Statistical/CustomerStatistics',[
+            'soLuongKhachHang' => $soLuongKhachHang,
+            'doanhThuTrungBinhCuaMoiKhachHang' => $doanhThuTrungBinhCuaMoiKhachHang,
+            'soLuongDonTheoTrungBinhCuaKhachHang' => $soLuongDonTheoTrungBinhCuaKhachHang,
+            'danhSachKhachCoDoanhThuCaoNhat' => $danhSachKhachCoDoanhThuCaoNhat,
+            'newCustomers' => $newCustomers,
+            // 'soLuongKhachHang' => $soLuongKhachHang,
+        ]);
+    }
+
+    public function categoryStatistics(Request $request){
+        $timeframe = $request->input('timeFrame','today');
+        $now = Carbon::now();
+        switch($timeframe){
+            case 'week':
+                $timeframe = (clone $now)->startOfWeek();
+                break;
+            case 'month':
+                $timeframe = (clone $now)->startOfMonth();
+                break;
+            case 'year':
+                $timeframe = (clone $now)->startOfYear();
+                break;
+            case 'today':
+            default:
+                $timeframe = (clone $now)->startOfDay();
+                break;
+        }
+        // dd($timeframe);
+        
+        $categoryData = Category::join('products', 'categories.id', '=', 'products.category_id')
+        ->join('order_items', 'products.id', '=', 'order_items.product_id')
+        ->join('orders', 'order_items.order_id', '=', 'orders.id')
+        ->selectRaw('categories.category_name, 
+                    SUM(order_items.quantity) as total_sold, 
+                    SUM(order_items.price * order_items.quantity) as total_revenue')
+        ->whereIn('orders.status', ['Đã giao hàng', 'Đã đánh giá']) 
+        ->where('orders.created_at', '>=', $timeframe)
+        ->groupBy('categories.id', 'categories.category_name')
+        ->orderBy('total_revenue', 'desc') 
+        ->get();
+        //  bán chạy nhất
+        $bestSellingCategory = $categoryData->first();
+
+        //  bán ít nhất
+        $leastSellingCategory = $categoryData->last();
+
+        // Tính trung bình doanh thu của tất cả danh mục
+        $averageRevenue = $categoryData->avg('total_revenue');
+        // dd($categoryData);
+        return Inertia::render('Admin/Statistical/CategoryStatistics',[
+            'categoryData' => $categoryData,
+            'bestSellingCategory' => $bestSellingCategory,
+            'leastSellingCategory' => $leastSellingCategory,
+            'averageRevenue' => $averageRevenue,
+        ]);
+    }
+
+
+    public function foodStatistics(){
+        $bestSellingFood = Product::orderBy('sold_quantity', 'desc')->first();
+        $leastSellingFood = Product::orderBy('sold_quantity', 'asc')->first();
+        $topSelling = Product::orderBy('sold_quantity', 'desc')->take(5)->get();
+        $sumQuantity = Product::sum('sold_quantity');
+
+        // dd($sumQuantity);
+        
+        return Inertia::render('Admin/Statistical/FoodStatistics', [
+            'bestSellingFood' => $bestSellingFood,
+            'leastSellingFood' => $leastSellingFood,
+            'topSelling' => $topSelling,
+            'sumQuantity' => $sumQuantity,
+        ]);
     }
 
 }

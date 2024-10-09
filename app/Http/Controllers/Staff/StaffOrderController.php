@@ -37,6 +37,14 @@ class StaffOrderController extends Controller
     public function updateStatus(Request $request, Order $order){
         // dd($request->all());
         $order->update($request->all());
+        // if ($order->status === 'Đã nhận đơn' && is_null($order->delivery_start_time)) {
+        //     $order->delivery_start_time = now();
+        // }
+        if ($order->status === 'Đã giao hàng' && is_null($order->delivery_end_time)) {
+            $order->delivery_end_time = now();
+        }
+    
+        $order->save();
         return back()->with('success','Đã cập nhật trạng thái đơn hàng.');
     }
 }

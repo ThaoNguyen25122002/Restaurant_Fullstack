@@ -116,6 +116,9 @@ Route::prefix('admin')->group(function(){
         // ================== Statistical ================ //
         Route::get('statistical',[StatisticalController::class,'index'])->name('admin.statistical');
         Route::get('statistical/orders',[StatisticalController::class,'orderStatistics'])->name('admin.statistical.orders');
+        Route::get('statistical/customers',[StatisticalController::class,'customerStatistics'])->name('admin.statistical.customers');
+        Route::get('statistical/categories',[StatisticalController::class,'categoryStatistics'])->name('admin.statistical.categories');
+        Route::get('statistical/food',[StatisticalController::class,'foodStatistics'])->name('admin.statistical.food');
     });
 });
 

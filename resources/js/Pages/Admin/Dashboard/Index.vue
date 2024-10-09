@@ -152,7 +152,9 @@ const toggle = ref(false);
                         🍽️
                     </div>
                     <div>
-                        <h3 class="text-lg font-bold text-gray-700">Món ăn</h3>
+                        <h3 class="text-lg font-bold text-gray-700">
+                            Số lượng món bán ra
+                        </h3>
                         <p class="text-2xl text-gray-800 font-semibold">
                             {{ tongMonAn ? tongMonAn : 0 }}
                         </p>
