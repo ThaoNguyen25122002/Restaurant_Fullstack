@@ -76,7 +76,10 @@ const formatCurrency = (value) => {
                 <h3 class="font-semibold text-lg">Tỷ lệ thành công</h3>
                 <p class="text-2xl font-bold">
                     {{
-                        100 - Math.round((donHangThatBai / tongDonHang) * 100)
+                        tongDonHang > 0
+                            ? 100 -
+                              Math.round((donHangThatBai / tongDonHang) * 100)
+                            : 0
                     }}%
                 </p>
             </div>

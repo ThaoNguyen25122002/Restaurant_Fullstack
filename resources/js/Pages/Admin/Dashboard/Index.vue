@@ -21,8 +21,8 @@ Chart.register(
 const selectedRange = ref("today");
 const props = defineProps({
     revenueData: Array,
-    doanhThu: String,
-    tongMonAn: String,
+    doanhThu: [String, Number],
+    tongMonAn: [String, Number],
     tongDonHang: Number,
     tiLeThanhCong: Number,
     tiLeThatBai: Number,
@@ -164,7 +164,7 @@ const toggle = ref(false);
 
             <!-- Best-Selling, Least-Selling, Success, and Failure Rates -->
             <div
-                class="col-span-1 lg:col-span-3 grid grid-cols-1 lg:grid-cols-4 gap-6"
+                class="col-span-1 lg:col-span-3 grid grid-cols-1 lg:grid-cols-2 gap-6"
             >
                 <div class="bg-white p-6 rounded-lg shadow-md">
                     <h3 class="text-lg font-semibold text-gray-700 mb-2">

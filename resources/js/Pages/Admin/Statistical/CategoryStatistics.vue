@@ -81,8 +81,12 @@ const fetchData = () => {
                             <h3 class="text-lg font-medium text-gray-500">
                                 Danh mục bán chạy nhất
                             </h3>
-                            <p class="text-4xl font-bold text-gray-800">
-                                {{ bestSellingCategory.category_name }}
+                            <p class="text-xl font-bold text-gray-800">
+                                {{
+                                    bestSellingCategory
+                                        ? bestSellingCategory.category_name
+                                        : "0"
+                                }}
                             </p>
                         </div>
                     </div>
@@ -102,8 +106,12 @@ const fetchData = () => {
                             <h3 class="text-lg font-medium text-gray-500">
                                 Danh mục bán ít nhất
                             </h3>
-                            <p class="text-4xl font-bold text-gray-800">
-                                {{ leastSellingCategory.category_name }}
+                            <p class="text-xl font-bold text-gray-800">
+                                {{
+                                    leastSellingCategory
+                                        ? leastSellingCategory.category_name
+                                        : "0"
+                                }}
                             </p>
                         </div>
                     </div>

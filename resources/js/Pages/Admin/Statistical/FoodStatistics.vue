@@ -6,13 +6,23 @@ defineProps({
     bestSellingFood: Object,
     leastSellingFood: Object,
     topSelling: Array,
-    sumQuantity: Number,
+    sumQuantity: String,
+    topRating: Object,
+    lowestRating: Object,
 });
 const formatCurrency = (value) => {
     return new Intl.NumberFormat("vi-VN", {
         style: "currency",
         currency: "VND",
     }).format(value);
+};
+const formatNumber = (value) => {
+    const numberValue = parseFloat(value);
+
+    if (Number.isInteger(numberValue)) {
+        return Math.round(numberValue);
+    }
+    return numberValue.toFixed(1);
 };
 </script>
 
@@ -24,8 +34,7 @@ const formatCurrency = (value) => {
                 <h1 class="text-xl font-semibold text-gray-800">
                     Doanh Thu Theo Món
                 </h1>
-                <div>
-                    <!-- Select filter theo ngày, tuần, tháng, năm -->
+                <!-- <div>
                     <select
                         class="bg-yellow-500 text-white px-4 py-2 rounded-md shadow focus:outline-none"
                     >
@@ -34,7 +43,7 @@ const formatCurrency = (value) => {
                         <option value="month">Theo tháng</option>
                         <option value="year">Theo năm</option>
                     </select>
-                </div>
+                </div> -->
             </div>
         </nav>
 
@@ -58,7 +67,7 @@ const formatCurrency = (value) => {
                             <h3 class="text-lg font-medium text-gray-500">
                                 Món bán chạy nhất
                             </h3>
-                            <p class="text-4xl font-bold text-gray-800">
+                            <p class="text-xl font-bold text-gray-800">
                                 {{ bestSellingFood.product_name }}
                             </p>
                             <p class="text-sm text-gray-500">
@@ -82,7 +91,7 @@ const formatCurrency = (value) => {
                             <h3 class="text-lg font-medium text-gray-500">
                                 Món bán ít nhất
                             </h3>
-                            <p class="text-4xl font-bold text-gray-800">
+                            <p class="text-xl font-bold text-gray-800">
                                 {{ leastSellingFood.product_name }}
                             </p>
                             <p class="text-sm text-gray-500">
@@ -113,7 +122,72 @@ const formatCurrency = (value) => {
                     </div>
                 </div>
             </div>
-
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-lg font-semibold text-gray-700 mb-2">
+                        Món bán có đánh giá tốt nhất
+                    </h3>
+                    <p class="text-xl text-green-600">
+                        {{ topRating.product_name }}
+                    </p>
+                    <div class="flex items-center gap-1">
+                        <p class="text-lg text-gray-500">Đánh giá :</p>
+                        <div class="flex items-center">
+                            <svg
+                                class="size-5 text-yellow-500 transform translate-y-[-2px]"
+                                aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="24"
+                                height="24"
+                                fill="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    d="M13.849 4.22c-.684-1.626-3.014-1.626-3.698 0L8.397 8.387l-4.552.361c-1.775.14-2.495 2.331-1.142 3.477l3.468 2.937-1.06 4.392c-.413 1.713 1.472 3.067 2.992 2.149L12 19.35l3.897 2.354c1.52.918 3.405-.436 2.992-2.15l-1.06-4.39 3.468-2.938c1.353-1.146.633-3.336-1.142-3.477l-4.552-.36-1.754-4.17Z"
+                                />
+                            </svg>
+                            <span class="text-gray-500">{{
+                                formatNumber(topRating.average_rating) +
+                                " ( " +
+                                topRating.count_rating +
+                                " lược đánh giá )"
+                            }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-lg font-semibold text-gray-700 mb-2">
+                        Món có đánh giá tệ nhất
+                    </h3>
+                    <p class="text-xl text-red-600">
+                        {{ lowestRating.product_name }}
+                    </p>
+                    <div class="flex items-center gap-1">
+                        <p class="text-lg text-gray-500">Đánh giá :</p>
+                        <div class="flex items-center">
+                            <svg
+                                class="size-5 text-yellow-500 transform translate-y-[-2px]"
+                                aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="24"
+                                height="24"
+                                fill="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    d="M13.849 4.22c-.684-1.626-3.014-1.626-3.698 0L8.397 8.387l-4.552.361c-1.775.14-2.495 2.331-1.142 3.477l3.468 2.937-1.06 4.392c-.413 1.713 1.472 3.067 2.992 2.149L12 19.35l3.897 2.354c1.52.918 3.405-.436 2.992-2.15l-1.06-4.39 3.468-2.938c1.353-1.146.633-3.336-1.142-3.477l-4.552-.36-1.754-4.17Z"
+                                />
+                            </svg>
+                            <span class="text-gray-500">{{
+                                formatNumber(lowestRating.average_rating) +
+                                " ( " +
+                                lowestRating.count_rating +
+                                " lược đánh giá )"
+                            }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <!-- Danh sách món có doanh thu cao nhất -->
             <div class="mt-10">
                 <h2 class="text-2xl font-semibold text-gray-700 mb-4">

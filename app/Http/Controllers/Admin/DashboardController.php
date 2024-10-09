@@ -52,7 +52,7 @@ class DashboardController extends Controller
     })->sum('quantity');
 
     // Tổng số đơn hàng (trừ đơn hàng đã hủy)
-    $tongDonHang = Order::where('status', '!=', 'Đã hủy')
+    $tongDonHang = Order::whereIn('status', ['Đã hủy','Đã giao hàng', 'Đã đánh giá'])
         ->whereBetween('created_at', [$startDate, $now])
         ->count();
 
@@ -102,6 +102,7 @@ class DashboardController extends Controller
         // $dishCount,
         // $customerCount);
         return Inertia::render('Admin/Dashboard/Index',[
+            // 'doanhThu' => $doanhThu ?  $doanhThu : 0,
             'doanhThu' => $doanhThu ?  $doanhThu : 0,
             'tongMonAn' => $tongMonAn ? $tongMonAn : 0,
             'tongDonHang' => $tongDonHang ? $tongDonHang : 0,
