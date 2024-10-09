@@ -25,7 +25,7 @@ class RegisterRequest extends FormRequest
             'email'=>['required','max:100','email','unique:users,email'],
             'name'=>['required','max:60'],
             'password'=> ['required','min:6','confirmed'],
-            "phone" => ['nullable','min:10','regex:/^[0-9]{9,10}$/'],
+            "phone" => ['nullable','min:10'],
             "address" => ['nullable','max:100']
         ];
     }
@@ -43,7 +43,7 @@ class RegisterRequest extends FormRequest
             'password.min' => 'Mật khẩu phải có ít nhất :min ký tự.',
             'password.confirmed' => 'Mật khẩu không khớp.',
             'phone.min' => 'Số điện thoái có ít nhất :min ký tự.',
-            'phone.regex' => 'Số điện thoái không đúng định dạng.',
+            // 'phone.regex' => 'Số điện thoái không đúng định dạng.',
             'address.max' => 'Địa chỉ được sử dụng tối đa là :max ký tự.'
         ];
     }

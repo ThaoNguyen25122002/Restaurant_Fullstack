@@ -30,15 +30,13 @@ use Inertia\Inertia;
 // ================== Home ================ //
 Route::get('/',[HomeController::class,'index'])->name('home');
 // ================== Handle Cart ================ //
-Route::post('/cart/{product}/store',[CartController::class,'store'])->name('cart.store');
 Route::get('/cart',[CartController::class,'index'])->name('cart');
-Route::patch('/cart/{cartItem}/update',[CartController::class,'update'])->name('cart.update');
-Route::delete('/cart/{cartItem}/delete',[CartController::class,'delete'])->name('cart.delete');
+
 // ================== Food Detail ================ //    
 Route::get('food/{product:slug}',[FoodController::class,'show'])->name('food.detail');
 Route::get('categories/{category:slug}',[FoodController::class,'getFoodByCategory'])->name('foods.category');
 // Route::get('foods/menu',[FoodController::class,'test'])->name('foods.menu');
-Route::get('menu/foods',[MenuController::class,'index'])->name('foods.menu');
+Route::get('menu',[MenuController::class,'index'])->name('foods.menu');
 // ================== Search Foods ================ //    
 Route::get('foods',[SearchQueryController::class,'index'])->name('foods.search');
 // ================== Contact ================ //    
@@ -75,7 +73,13 @@ Route::middleware('auth')->group(function(){
     Route::delete('/orders/{order}/delete',[CustomerOrderController::class,'delete'])->name('orders.delete');
     // ================== Reviews ================ //
     Route::post('/reviews/{order}',[ReviewController::class,'store'])->name('reviews.create');
-    
+
+
+    // ================== Cart ================ //
+    Route::post('/cart/{product}/store',[CartController::class,'store'])->name('cart.store');
+    Route::patch('/cart/{cartItem}/update',[CartController::class,'update'])->name('cart.update');
+    Route::delete('/cart/{cartItem}/delete',[CartController::class,'delete'])->name('cart.delete');
+    Route::post('/cart/{orderId}/repurchase',[CartController::class,'repurchase'])->name('cart.repurchase');
 });
 
 // ================================== Admin ==================================== //

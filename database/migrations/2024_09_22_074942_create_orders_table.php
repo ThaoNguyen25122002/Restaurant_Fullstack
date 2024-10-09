@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('customer_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('staff_id')->nullable()->constrained('users')->onDelete('set null'); 
             $table->decimal('total_amount', 10, 2);
+            $table->decimal('original_total_amount', 10, 2)->nullable();
             $table->enum('payment_method',['vnpay','cod'])->default('cod');
             $table->enum('status', ['Chờ duyệt', 'Đã nhận đơn', 'Đang giao hàng', 'Đã giao hàng', 'Đã hủy', 'Đã đánh giá'])->default('Chờ duyệt');
             $table->string('delivery_address');

@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
 use App\Models\CartItem;
+use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -56,5 +58,29 @@ class CartController extends Controller
         $cartItem->delete();
         // dd($cartItem);
         return back()->with('success','Đã xóa.');
+    }
+
+    public function repurchase(Request $request,$orderId){
+        // dd($orderId);
+        $productIds = OrderItem::where('order_id',$orderId)->pluck('product_id');
+        // dd($productIds);
+        $user_id = Auth::id();
+        foreach($productIds as $productId){
+            $cartItem = CartItem::where('user_id', $user_id)
+            ->where('product_id', $productId)
+            ->first();
+            if ($cartItem) {
+            $cartItem->quantity += 1;
+            $cartItem->save();
+            } else {
+                CartItem::create([
+                                'user_id' => $user_id,
+                                'product_id' => $productId,
+                                'quantity' => 1,
+                                ]);
+                }
+        }
+
+        return to_route('cart');
     }
 }

@@ -75,7 +75,37 @@ const handleDelete = (orderId) => {
         }
     });
 };
-
+const handleRepurchase = (orderId) => {
+    Swal.fire({
+        title: "Bạn muốn mua lại?",
+        // text: "Bạn không thể khôi phục nếu xóa!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes!",
+    }).then((result) => {
+        if (result.isConfirmed) {
+            router.post(route("cart.repurchase", { id: orderId }), {
+                onSuccess: (page) => {
+                    Swal.fire({
+                        title: page.props.flash.success,
+                        // text: page.props.flash.success,
+                        icon: "success",
+                    });
+                },
+                onError: (error) => {
+                    Swal.fire({
+                        title: "Không Thể Hủy",
+                        text: error[0],
+                        icon: "error",
+                    });
+                },
+                preserveScroll: true,
+            });
+        }
+    });
+};
 const dialogVisible = ref(false);
 
 const handleReview = (items, orderId) => {
@@ -290,6 +320,7 @@ const handleClose = () => {
                         </button>
                         <button
                             v-else-if="order.status === 'Đã đánh giá'"
+                            @click="handleRepurchase(order.id)"
                             class="bg-gray-600 text-white font-bold py-2 px-4 rounded hover:bg-gray-700"
                         >
                             Mua lại

@@ -144,7 +144,13 @@ onMounted(() => {
                                 Đơn trung bình của mỗi khách
                             </h3>
                             <p class="text-4xl font-bold text-gray-800">
-                                {{ soLuongDonTheoTrungBinhCuaKhachHang }}
+                                {{
+                                    parseFloat(
+                                        soLuongDonTheoTrungBinhCuaKhachHang.toFixed(
+                                            1
+                                        )
+                                    )
+                                }}
                             </p>
                         </div>
                     </div>
