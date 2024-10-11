@@ -15,13 +15,10 @@ use Inertia\Inertia;
 class DashboardController extends Controller
 {
     public function index(Request $request){
-        // Lấy giá trị timeframe từ request hoặc mặc định là 'today'
-    // $timeframe = $request->input('timeframe','today');
     $timeframe = $request->input('timeFrame','today');
     // dd($timeframe);
     $now = Carbon::now();
     
-    // Xử lý logic cho từng khoảng thời gian
     switch ($timeframe) {
         case 'week':
             $startDate = (clone $now)->startOfWeek();
@@ -41,32 +38,26 @@ class DashboardController extends Controller
             break;
     }
     // dd($startDate, $now);
-    // Lấy doanh thu cho khoảng thời gian đã chọn
     $doanhThu = Order::whereBetween('created_at', [$startDate, $now])
     ->whereIn('status', ['Đã giao hàng', 'Đã đánh giá']) 
     ->sum('total_amount');
     // dd($doanhThu);
-    // Tổng số món ăn đã bán
     $tongMonAn = OrderItem::whereHas('order', function ($query) use ($startDate, $now) {
         $query->whereBetween('created_at', [$startDate, $now]);
     })->sum('quantity');
 
-    // Tổng số đơn hàng (trừ đơn hàng đã hủy)
     $tongDonHang = Order::whereIn('status', ['Đã hủy','Đã giao hàng', 'Đã đánh giá'])
         ->whereBetween('created_at', [$startDate, $now])
         ->count();
 
-    // Đơn hàng thành công
     $donHangThanhCong = Order::whereIn('status', ['Đã giao hàng', 'Đã đánh giá'])
         ->whereBetween('created_at', [$startDate, $now])
         ->count();
 
-    // Đơn hàng thất bại (đã hủy)
     $donHangThatBai = Order::where('status', 'Đã hủy')
         ->whereBetween('created_at', [$startDate, $now])
         ->count();
 
-    // Tính tỷ lệ thành công và thất bại
     $tiLeThanhCong = $tongDonHang > 0 ? ($donHangThanhCong / $tongDonHang) * 100 : 0;
     $tiLeThatBai = $tongDonHang > 0 ? ($donHangThatBai / $tongDonHang) * 100 : 0;
 

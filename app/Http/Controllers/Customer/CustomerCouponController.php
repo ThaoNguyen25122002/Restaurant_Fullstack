@@ -17,7 +17,7 @@ class CustomerCouponController extends Controller
         $coupon = Coupon::where('code', $code)
                     ->whereDate('start_date', '<=', now())
                     ->whereDate('end_date', '>=', now())
-                    ->whereColumn('used_quantity', '<', 'quantity') // Còn số lượng mã khả dụng
+                    ->whereColumn('used_quantity', '<', 'quantity') 
                     ->first();
         
         // dd($coupon);

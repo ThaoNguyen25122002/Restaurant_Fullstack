@@ -25,14 +25,12 @@ class AdminOrderController extends Controller
     public function index(Request $request)
     {
         $orders = Order::when($request->search, function($query) use($request) {
-            // Tìm kiếm theo mã đơn hàng hoặc tên khách hàng
             $query->where('order_code', 'like', '%' . $request->search . '%')
                 ->orWhereHas('customer', function($q) use($request) {
                     $q->where('name', 'like', '%' . $request->search . '%');
                 });
         })
         ->when($request->status, function($query) use($request) {
-            // Lọc theo trạng thái nếu có yêu cầu
             $query->where('status', $request->status);
         })
         ->latest()
