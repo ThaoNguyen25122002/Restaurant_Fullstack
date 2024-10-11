@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
 use App\Models\CartItem;
+use App\Models\Coupon;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
+use App\Models\UserCoupon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -23,17 +25,32 @@ class CheckoutController extends Controller
                 return back()->withErrors($product->product_name.' số lượng chỉ còn '.$product->quantity);
             }
         }
+
         return Inertia::render('Customer/Checkout/Index',[
             'carts' => $carts
         ]);
     }
 
     public function paymentCod(Request $request){
+        // dd($request->all());
         $customerId = Auth::id();
+        if($request->coupon_id != null){
+            // dd(123);
+            UserCoupon::create([
+                'user_id' => $customerId,
+                'coupon_id' => $request->coupon_id,
+            ]);
+            $coupon = Coupon::findOrFail($request->coupon_id);
+            $coupon->used_quantity +=1;
+            $coupon->save();
+        }
+        // dd(456);
+        
         $orderData = $request->all();
         $orderCode = strtoupper(Str::random(10));
         $orderData['customer_id'] = $customerId;
         $orderData['order_code'] = $orderCode;
+        // dd($orderData);
         $order = Order::create($orderData);
         $carts = CartItem::where('user_id', $customerId)
         ->get();
@@ -130,7 +147,9 @@ class CheckoutController extends Controller
         // dd($vnp_DeliveryAddress);
         session([
             'delivery_address' => $request->input('delivery_address'),
-            'note' => $request->input('note')
+            'note' => $request->input('note'),
+            'original_total_amount' => $request->input('original_total_amount'),
+            'coupon_id' => $request->coupon_id,
         ]);
         $vnp_TxnRef = $orderCode; // Mã đơn hàng
         $vnp_OrderInfo = 'Thanh toán đơn hàng ' . $orderCode;
@@ -191,18 +210,29 @@ class CheckoutController extends Controller
         // dd($request->all());
         $vnp_Inv_Address = session('delivery_address');
         $vnp_Note = session('note');
+        $vnp_Original_Amount = session('original_total_amount');
+        $vnp_Coupon_Id = session('coupon_id');
         $customerId = Auth::id();
         $vnp_ResponseCode = $request->input('vnp_ResponseCode');
         $vnp_TxnRef = $request->input('vnp_TxnRef');
         // dd($vnp_Inv_Address);
         $vnp_Amount = $request->input('vnp_Amount') / 100;
+        if($vnp_Coupon_Id != null){
+            UserCoupon::create([
+                'user_id' => $customerId,
+                'coupon_id' => $vnp_Coupon_Id,
+            ]);
+            $coupon = Coupon::findOrFail($vnp_Coupon_Id);
+            $coupon->used_quantity +=1;
+            $coupon->save();
+        }
         // dd($vnp_Inv_Address,$vnp_Note);
-        // Kiểm tra trạng thái thanh toán
         if ($vnp_ResponseCode == "00") {
             $order = Order::create([
                 'customer_id' => $customerId,
                 'order_code' => $vnp_TxnRef,
                 'total_amount' => $vnp_Amount,
+                'original_total_amount' => $vnp_Original_Amount,
                 'payment_method' => 'vnpay',
                 'delivery_address' => $vnp_Inv_Address,
                 'note' => $vnp_Note

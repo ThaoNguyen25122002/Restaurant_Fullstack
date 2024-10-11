@@ -213,11 +213,12 @@ const updateProfile = () => {
     </el-dialog>
     <!-- End Dialog Form Create or Edit User -->
     <div
-        class="sm:ml-64 fixed top-0 right-0 left-0 shadow-xl bg-slate-50 px-4 py-2 z-30"
+        class="sm:ml-64 fixed top-0 right-0 left-0 shadow-xl bg-slate-50 px-4 z-30"
     >
         <div class="flex justify-between">
             <div class="flex items-center">
-                <div class="hidden sm:block">
+                <img :src="'/storage/Logo/logokfc.png'" alt="" class="h-14" />
+                <!-- <div class="hidden sm:block">
                     <label
                         for="default-search"
                         class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
@@ -250,7 +251,7 @@ const updateProfile = () => {
                             placeholder="Search Mockups, Logos..."
                         />
                     </div>
-                </div>
+                </div> -->
             </div>
             <div class="group relative cursor-pointer">
                 <div class="flex justify-center items-center gap-2">

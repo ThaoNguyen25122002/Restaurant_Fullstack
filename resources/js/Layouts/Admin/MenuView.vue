@@ -161,7 +161,7 @@ const toggle = ref(false);
                 </li>
                 <li>
                     <Link
-                        :href="route('admin.statistical')"
+                        :href="route('admin.coupons')"
                         class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
                     >
                         <svg
@@ -184,11 +184,11 @@ const toggle = ref(false);
                         <span
                             class="flex-1 ms-3 whitespace-nowrap"
                             :class="
-                                $page.component === 'Admin/Statistical/Index'
+                                $page.component === 'Admin/Coupon/Index'
                                     ? 'text-red-300 font-semibold'
                                     : ''
                             "
-                            >Thống Kê</span
+                            >Mã Giảm Giá</span
                         >
                     </Link>
                 </li>

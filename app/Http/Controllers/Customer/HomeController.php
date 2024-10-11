@@ -17,7 +17,7 @@ class HomeController extends Controller
         ->leftJoin('reviews', 'products.id', '=', 'reviews.product_id')
         ->groupBy('products.id')
         ->orderBy('products.sold_quantity', 'desc')
-        ->take(8) // Lấy trước 8 sản phẩm có số lượng đã bán nhiều nhất
+        ->take(8)
         ->get();
         // dd($products);
         return inertia('Customer/Home/Index',[

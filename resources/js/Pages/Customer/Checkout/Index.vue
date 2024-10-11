@@ -18,12 +18,61 @@ const totalPrice = computed(() => {
         0
     );
 });
+// const form = useForm({
+//     coupon_id: null,
+//     original_total_amount: null,
+//     payment_method: "cod",
+//     delivery_address: page.props.auth.user.address,
+//     note: null,
+//     total_amount: totalPrice,
+// });
+// Tạo form sử dụng useForm
 const form = useForm({
+    coupon_id: null,
+    original_total_amount: ref(totalPrice.value), // Khởi tạo dưới dạng ref
     payment_method: "cod",
     delivery_address: page.props.auth.user.address,
     note: null,
-    total_amount: totalPrice,
+    total_amount: ref(totalPrice.value), // Sử dụng ref để có thể cập nhật giá trị
 });
+const coupon = useForm({
+    code: null,
+});
+
+// Xử lý khi áp dụng mã giảm giá
+const handleApplyCoupon = () => {
+    coupon.post(route("customer.coupons.apply"), {
+        onSuccess: (page) => {
+            const discountPercentage =
+                page.props.flash.success.discount_percentage;
+
+            form.original_total_amount = totalPrice.value;
+
+            form.total_amount =
+                totalPrice.value * (1 - discountPercentage / 100);
+
+            form.coupon_id = page.props.flash.success.id;
+            Swal.fire({
+                // title: "Không Thể Áp Dụng",
+                text:
+                    "Đã áp dụng mã giảm " +
+                    page.props.flash.success.discount_percentage +
+                    "%",
+                icon: "success",
+            });
+            console.log(form);
+        },
+        onError: (error) => {
+            Swal.fire({
+                title: "Không Thể Áp Dụng",
+                text: error[0],
+                icon: "error",
+            });
+        },
+        preserveScroll: true,
+        preserveState: true,
+    });
+};
 
 const handleCheckout = () => {
     // console.log(paymentMethod.value);
@@ -158,25 +207,35 @@ const formatCurrency = (value) => {
                     <div class="flex justify-between mb-2">
                         <span class="text-gray-700">Tạm Tính</span>
                         <span class="text-gray-700">{{
-                            formatCurrency(totalPrice)
+                            formatCurrency(form.original_total_amount)
                         }}</span>
                     </div>
-                    <!-- <div class="flex items-center justify-between mb-2">
+                    <div class="flex items-center justify-between mb-2">
                         <input
                             type="text"
                             class="w-1/2 border border-gray-300 rounded-lg p-2"
                             placeholder="Mã giảm giá"
+                            v-model="coupon.code"
                         />
                         <button
                             class="ml-2 bg-red-500 text-white px-4 py-2 rounded-lg"
+                            @click="handleApplyCoupon"
                         >
                             Áp dụng
                         </button>
                     </div>
+                    <small class="text-red-500">{{ coupon.errors.code }}</small>
                     <div class="flex justify-between mb-2">
                         <span class="text-gray-700">Giảm Giá</span>
-                        <span class="text-gray-700">89,600đ</span>
-                    </div> -->
+                        <span class="text-gray-700">{{
+                            form.original_total_amount != form.total_amount
+                                ? formatCurrency(
+                                      form.original_total_amount -
+                                          form.total_amount
+                                  )
+                                : "0đ"
+                        }}</span>
+                    </div>
                     <div class="flex justify-between mb-2">
                         <span class="text-gray-700">Phí Vận Chuyển</span>
                         <span class="text-gray-700">Miễn Phí</span>
@@ -205,7 +264,7 @@ const formatCurrency = (value) => {
                         >Tổng Tiền</span
                     >
                     <span class="text-red-500 font-bold text-lg">{{
-                        formatCurrency(totalPrice)
+                        formatCurrency(form.total_amount)
                     }}</span>
                 </div>
 

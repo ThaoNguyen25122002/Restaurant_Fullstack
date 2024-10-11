@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AdminOrderController;
 use App\Http\Controllers\Admin\AdminProfileController;
 use App\Http\Controllers\Admin\AuthAdminController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\StatisticalController;
@@ -12,6 +13,7 @@ use App\Http\Controllers\Customer\AuthCustomerController;
 use App\Http\Controllers\Customer\HomeController;
 use App\Http\Controllers\Customer\CartController;
 use App\Http\Controllers\Customer\CheckoutController;
+use App\Http\Controllers\Customer\CustomerCouponController;
 use App\Http\Controllers\Customer\CustomerOrderController;
 use App\Http\Controllers\Customer\CustomerProfileController;
 use App\Http\Controllers\Customer\FoodController;
@@ -31,7 +33,7 @@ use Inertia\Inertia;
 Route::get('/',[HomeController::class,'index'])->name('home');
 // ================== Handle Cart ================ //
 Route::get('/cart',[CartController::class,'index'])->name('cart');
-
+Route::post('/cart/{product}/store',[CartController::class,'store'])->name('cart.store');
 // ================== Food Detail ================ //    
 Route::get('food/{product:slug}',[FoodController::class,'show'])->name('food.detail');
 Route::get('categories/{category:slug}',[FoodController::class,'getFoodByCategory'])->name('foods.category');
@@ -76,10 +78,14 @@ Route::middleware('auth')->group(function(){
 
 
     // ================== Cart ================ //
-    Route::post('/cart/{product}/store',[CartController::class,'store'])->name('cart.store');
+    
     Route::patch('/cart/{cartItem}/update',[CartController::class,'update'])->name('cart.update');
     Route::delete('/cart/{cartItem}/delete',[CartController::class,'delete'])->name('cart.delete');
     Route::post('/cart/{orderId}/repurchase',[CartController::class,'repurchase'])->name('cart.repurchase');
+
+    // ================== Apply Coupon ================ //
+    Route::post('coupons/apply',[CustomerCouponController::class,'applyCoupon'])->name('customer.coupons.apply');
+
 });
 
 // ================================== Admin ==================================== //
@@ -124,6 +130,11 @@ Route::prefix('admin')->group(function(){
         Route::get('statistical/categories',[StatisticalController::class,'categoryStatistics'])->name('admin.statistical.categories');
         Route::get('statistical/food',[StatisticalController::class,'foodStatistics'])->name('admin.statistical.food');
         Route::get('statistical/staff',[StatisticalController::class,'staffStatistics'])->name('admin.statistical.staff');
+        // ================== Coupons ================ //
+        Route::get('coupons',[CouponController::class,'index'])->name('admin.coupons');
+        Route::get('coupons/create',[CouponController::class,'create'])->name('admin.coupons.create');
+        Route::post('coupons/store',[CouponController::class,'store'])->name('admin.coupons.store');
+        Route::delete('coupons/{coupon}/delete',[CouponController::class,'delete'])->name('admin.coupons.delete');
     });
 });
 

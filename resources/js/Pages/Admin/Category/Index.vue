@@ -1,6 +1,6 @@
 <script setup>
-import AdminLayout from "@/Layouts/Admin/AdminLayout.vue";
 import PaginationLinks from "@/components/Common/PaginationLinks.vue";
+import AdminLayout from "@/Layouts/Admin/AdminLayout.vue";
 defineOptions({
     layout: AdminLayout,
 });

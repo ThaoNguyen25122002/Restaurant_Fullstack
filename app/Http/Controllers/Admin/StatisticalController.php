@@ -19,13 +19,10 @@ class StatisticalController extends Controller
    
     public function index(Request $request)
     {
-        // Lấy giá trị timeframe từ request hoặc mặc định là 'today'
-        // $timeframe = $request->input('timeframe','today');
         $timeframe = $request->input('timeFrame','today');
         // dd($timeframe);
         $now = Carbon::now();
         
-        // Xử lý logic cho từng khoảng thời gian
         switch ($timeframe) {
             case 'week':
                 $startDate = (clone $now)->startOfWeek();
@@ -45,36 +42,29 @@ class StatisticalController extends Controller
                 break;
         }
         // dd($startDate, $now);
-        // Lấy doanh thu cho khoảng thời gian đã chọn
         $doanhThu = Order::whereBetween('created_at', [$startDate, $now])
         ->whereIn('status', ['Đã giao hàng', 'Đã đánh giá']) 
         ->sum('total_amount');
         // dd($doanhThu);
-        // Tổng số món ăn đã bán
         $tongMonAn = OrderItem::whereHas('order', function ($query) use ($startDate, $now) {
             $query->whereBetween('created_at', [$startDate, $now]);
         })->sum('quantity');
 
-        // Tổng số đơn hàng (trừ đơn hàng đã hủy)
         $tongDonHang = Order::where('status', '!=', 'Đã hủy')
             ->whereBetween('created_at', [$startDate, $now])
             ->count();
 
-        // Đơn hàng thành công
         $donHangThanhCong = Order::whereIn('status', ['Đã giao hàng', 'Đã đánh giá'])
             ->whereBetween('created_at', [$startDate, $now])
             ->count();
 
-        // Đơn hàng thất bại (đã hủy)
         $donHangThatBai = Order::where('status', 'Đã hủy')
             ->whereBetween('created_at', [$startDate, $now])
             ->count();
 
-        // Tính tỷ lệ thành công và thất bại
         $tiLeThanhCong = $tongDonHang > 0 ? ($donHangThanhCong / $tongDonHang) * 100 : 0;
         $tiLeThatBai = $tongDonHang > 0 ? ($donHangThatBai / $tongDonHang) * 100 : 0;
 
-        // Món bán chạy nhất
         $banChayNhat = OrderItem::select('products.product_name', DB::raw('SUM(order_items.quantity) as total_quantity'))
             ->join('products', 'order_items.product_id', '=', 'products.id')
             ->whereHas('order', function ($query) use ($startDate, $now) {
@@ -84,7 +74,6 @@ class StatisticalController extends Controller
             ->orderBy('total_quantity', 'desc')
             ->first();
 
-        // Món bán ít nhất
         $banItNhat = OrderItem::select('products.product_name', DB::raw('SUM(order_items.quantity) as total_quantity'))
             ->join('products', 'order_items.product_id', '=', 'products.id')
             ->whereHas('order', function ($query) use ($startDate, $now) {
@@ -93,7 +82,6 @@ class StatisticalController extends Controller
             ->groupBy('products.product_name')
             ->orderBy('total_quantity', 'asc')
             ->first();
-            // dd($tongMonAn);
         return Inertia::render('Admin/Statistical/Index', [
             'doanhThu' => $doanhThu ?  $doanhThu : 0,
             'tongMonAn' => $tongMonAn ? $tongMonAn : 0,
@@ -108,7 +96,6 @@ class StatisticalController extends Controller
 
     public function orderStatistics(Request $request){
         $timeframe = $request->input('timeFrame','today');
-        // $users = DB::table('users')->leftJoin('orders','users.id', '=', 'orders.customer_id')->select('users.name', 'orders.total_amount')->get();
         $now = Carbon::now();
         switch($timeframe){
             case 'week':
@@ -126,7 +113,6 @@ class StatisticalController extends Controller
                 break;
         }
         $tongDonHang = Order::whereIn('status',['Đã hủy','Đã giao hàng', 'Đã đánh giá'])->whereBetween('created_at',[$timeframe, $now])->count();
-        // $donHangThanhCong = Order::whereIn('status',['Đã giao hàng', 'Đã đánh giá'])->whereBetween('created_at',[$timeframe, $now])->count();
         $donHangThatBai = Order::where('status','Đã hủy')->whereBetween('created_at',[$timeframe, $now])->count();
         $tongDoanhThu = Order::whereIn('status',['Đã giao hàng', 'Đã đánh giá'])->whereBetween('created_at',[$timeframe, $now])->sum('total_amount');
         $donDangXuLy = Order::whereIn('status',['Chờ duyệt', 'Đã nhận đơn', 'Đang giao hàng'])->whereBetween('created_at',[$timeframe, $now])->count();
@@ -217,7 +203,6 @@ class StatisticalController extends Controller
         //  bán ít nhất
         $leastSellingCategory = $categoryData->last();
 
-        // Tính trung bình doanh thu của tất cả danh mục
         $averageRevenue = $categoryData->avg('total_revenue');
         // dd($categoryData);
         return Inertia::render('Admin/Statistical/CategoryStatistics',[

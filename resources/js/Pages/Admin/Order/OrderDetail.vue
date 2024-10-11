@@ -175,9 +175,34 @@ const updateOrderDetail = () => {
                             {{ formatCurrency(item.price * item.quantity) }}
                         </td>
                     </tr>
-
                     <tr class="font-bold">
-                        <td class="p-2">Tổng cộng</td>
+                        <td class="p-2">Tổng đơn</td>
+                        <td></td>
+                        <td></td>
+                        <td class="p-2">
+                            {{ formatCurrency(orders.original_total_amount) }}
+                        </td>
+                    </tr>
+                    <tr
+                        class="font-bold"
+                        v-if="
+                            orders.original_total_amount != orders.total_amount
+                        "
+                    >
+                        <td class="p-2">Voucher</td>
+                        <td></td>
+                        <td></td>
+                        <td class="p-2">
+                            {{
+                                formatCurrency(
+                                    orders.original_total_amount -
+                                        orders.total_amount
+                                )
+                            }}
+                        </td>
+                    </tr>
+                    <tr class="font-bold">
+                        <td class="p-2">Thành tiền</td>
                         <td></td>
                         <td></td>
                         <td class="p-2">

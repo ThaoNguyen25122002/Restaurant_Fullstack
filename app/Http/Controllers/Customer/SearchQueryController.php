@@ -23,7 +23,7 @@ class SearchQueryController extends Controller
         })
         ->orderBy('sold_quantity', 'desc')
         ->withCount(['reviews as average_rating' => function($query) {
-            $query->select(DB::raw('coalesce(avg(rating), 0)')); // Tính trung bình đánh giá
+            $query->select(DB::raw('coalesce(avg(rating), 0)')); 
         }])
         ->get();
         return Inertia::render('Customer/Filter/FoodBySearch',[

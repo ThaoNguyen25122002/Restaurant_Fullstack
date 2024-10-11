@@ -288,12 +288,49 @@ const handleClose = () => {
                             <h3 class="text-gray-600 font-semibold mb-2">
                                 Chi tiết đơn hàng
                             </h3>
+                            <p class="">
+                                Phương thức thanh toán:
+                                {{
+                                    order.payment_method == "cod"
+                                        ? "Thanh toán khi nhận đơn"
+                                        : "Thanh toán VNPay"
+                                }}
+                            </p>
                             <p v-for="item in order.order_items" :key="item.id">
                                 {{ item.product.product_name }} -
                                 {{ item.quantity }} phần
                             </p>
+
+                            <div
+                                class="mt-2"
+                                v-if="
+                                    order.total_amount !=
+                                    order.original_total_amount
+                                "
+                            >
+                                <p>
+                                    Tổng đơn:
+                                    <span class="font-bold">{{
+                                        formatCurrency(
+                                            order.original_total_amount
+                                        )
+                                    }}</span>
+                                </p>
+                                <p>
+                                    Voucher:
+                                    <span class="font-bold">
+                                        {{
+                                            formatCurrency(
+                                                order.original_total_amount -
+                                                    order.total_amount
+                                            )
+                                        }}
+                                    </span>
+                                </p>
+                            </div>
                             <p class="font-bold mt-2">
-                                Tổng: {{ formatCurrency(order.total_amount) }}
+                                Thành tiền:
+                                {{ formatCurrency(order.total_amount) }}
                             </p>
                         </div>
 

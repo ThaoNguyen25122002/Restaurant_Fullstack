@@ -138,15 +138,17 @@ const formatCurrency = (value) => {
                         <select
                             v-model="selectedStatus"
                             @change="handleOrdersStatus"
-                            class="w-full bg-gray-100 p-2 rounded"
+                            class="w-full p-2 bg-blue-500 text-white px-4 py-2 rounded-lg shadow focus:outline-none"
                         >
                             <option value="Đã nhận đơn">Đơn đã xác nhận</option>
                             <option value="Đang giao hàng">
-                                Đang giao hàng
+                                Đơn đang giao hàng
                             </option>
-                            <option value="Đã giao hàng">Đã giao hàng</option>
-                            <option value="Đã hủy">Đã hủy</option>
-                            <option value="Đã đánh giá">Đã đánh giá</option>
+                            <option value="Đã giao hàng">Đơn đã giao</option>
+                            <option value="Đã hủy">Đơn đã hủy</option>
+                            <option value="Đã đánh giá">
+                                Đơn đã được đánh giá
+                            </option>
                         </select>
                     </div>
                 </div>
