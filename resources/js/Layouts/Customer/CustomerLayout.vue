@@ -15,5 +15,12 @@ import Footer from "./Footer.vue";
         <!-- Footer -->
         <Footer />
         <!-- End Footer -->
+        <!-- Chat Box AI -->
+        <df-messenger
+            intent="WELCOME"
+            chat-title="Hỗ trợ khách hàng"
+            agent-id="c823f962-1cd7-41bf-884a-cbd6fd1f861b"
+            language-code="vi"
+        ></df-messenger>
     </div>
 </template>

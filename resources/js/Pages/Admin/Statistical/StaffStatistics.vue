@@ -126,7 +126,7 @@ const fetchData = () => {
                         </div>
                     </div>
                     <h3 class="text-lg font-medium text-gray-500 mt-4">
-                        Số đơn hàng
+                        Tổng số đơn hàng
                     </h3>
                     <p class="text-4xl font-bold text-gray-800 mt-2">
                         {{ quantityOrders }}

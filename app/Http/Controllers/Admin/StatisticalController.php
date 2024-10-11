@@ -266,7 +266,7 @@ class StatisticalController extends Controller
         $staffStatistics = User::where('role_id', 3)
                                 ->leftJoin('orders', 'orders.staff_id', '=', 'users.id')
                                 ->whereBetween('orders.created_at', [$timeframe, $now])
-                                ->whereIn('orders.status', ['Đã giao hàng', 'Đã đánh giá'])
+                                ->whereIn('orders.status', ['Đã hủy','Đã giao hàng', 'Đã đánh giá'])
                                 ->selectRaw('users.name, COUNT(orders.id) as count_orders,  COALESCE(SUM(orders.total_amount), 0) as total_revenue')
                                 ->groupBy('users.id', 'users.name')
                                 ->orderBy('total_revenue', 'desc') 
