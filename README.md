@@ -30,15 +30,28 @@ composer install
 
 3.Sao Chép Tệp .env:
 cp .env.example .env
-
+Sau khi tao file .env thì sửa lại những chỗ sau:
 4.Cấu Hình Tệp .env:
-Mở tệp .env và chỉnh sửa các thông tin cấu hình như sau:
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=your_database
-DB_USERNAME=your_username
-DB_PASSWORD=your_password
+
+-   Databse
+    DB_CONNECTION=mysql
+    DB_HOST=127.0.0.1
+    DB_PORT=3306
+    DB_DATABASE=restaurant
+    DB_USERNAME=root
+    DB_PASSWORD=
+-   Mail
+    MAIL_MAILER=smtp
+    MAIL_HOST=sandbox.smtp.mailtrap.io
+    MAIL_PORT=2525
+    MAIL_USERNAME=ba1415c88d07d7
+    MAIL_PASSWORD=b98bec0b801d81
+    MAIL_FROM_ADDRESS=nlcongthao@gmail.com
+    MAIL_FROM_NAME="${APP_NAME}"
+
+5. Chạy lênh để tạo khóa ứng dụng
+   php artisan key:generate
+6. Lấy file mysql trong folder database/restaurant.sql rồi import nó vào mysql để sử dụng
 
 Cài Đặt Frontend (Vue.js)
 1.Cài Đặt Các Phụ Thuộc Node:
