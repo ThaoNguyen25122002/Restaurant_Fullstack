@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Customer;
 
+use App\Events\OrderCreated;
 use App\Http\Controllers\Controller;
 use App\Models\CartItem;
 use App\Models\Coupon;
@@ -67,6 +68,7 @@ class CheckoutController extends Controller
             $product->save();
         }
         CartItem::where('user_id', $customerId)->delete();
+        event(new OrderCreated($order));
         // dd($carts);
         return to_route('home')->with('success','Đặt hàng thành công.');
     }
@@ -193,6 +195,7 @@ class CheckoutController extends Controller
             if($vnp_Note){
                 $data['note']= $vnp_Note;
             }
+            event(new OrderCreated($order));
             return inertia('Customer/Checkout/PaymentReturn', [
                 'vnpData' => $data
             ]); 

@@ -28,7 +28,7 @@ defineProps({
                         :href="route('foods.category', { slug: category.slug })"
                     >
                         <img
-                            class="w-full h-48 object-cover transition-transform duration-700 ease-in-out hover:scale-110"
+                            class="w-full object-cover transition-transform duration-700 ease-in-out hover:scale-110"
                             :src="'storage/' + category.category_image"
                             alt="Ưu Đãi"
                         />

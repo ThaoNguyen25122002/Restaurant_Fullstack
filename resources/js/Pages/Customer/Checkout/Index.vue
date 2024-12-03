@@ -39,7 +39,6 @@ const coupon = useForm({
     code: null,
 });
 
-// Xử lý khi áp dụng mã giảm giá
 const handleApplyCoupon = () => {
     coupon.post(route("customer.coupons.apply"), {
         onSuccess: (page) => {
